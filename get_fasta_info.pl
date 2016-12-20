@@ -145,9 +145,11 @@ sub print_counts {
           $file_name;
     }
     else {
-        printf STDOUT
-            "\n# File: %s\nNseqs: %9d\nMin. length: %d\nMax. length: %d\nAvg. length: %d\n",
-            $file_name, $contigs, $min, $max, $ave;
+        #printf STDOUT
+        #    "\n# File: %s\nNseqs: %9d\nMin. length: %d\nMax. length: %d\nAvg. length: %d\n",
+        #    $file_name, $contigs, $min, $max, $ave;
+        print STDERR "Nseqs\tMin.len\tMax.len\tAvg.len\tFile\n";
+        printf STDOUT "%d\t%d\t%d\t%d\t%s\n", $contigs, $min, $max, $ave, $file_name;
     }
 
     return;
