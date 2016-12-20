@@ -2,7 +2,12 @@
 
 ## Usage: get_fasta_info.gz.pl infile.fa
 ## Internet source modified by JN.
-## Last changes: 12/20/2012 10:03:43 AM
+## Last changes: 12/20/2016 06:52:03 PM
+## Prints tab separated info. Header is printed
+## to stderr, so can be easily discarded:
+##
+##    Nseqs Min.len Max.len Avg.len File
+##    9     643     649	    647     1.fas
 
 use strict;
 use Data::Dumper;
