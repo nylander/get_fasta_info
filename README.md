@@ -1,5 +1,6 @@
-get_fasta_info
-==============
+# get_fasta_info
+
+### Description
 
 Some useful summary tools for FASTA formatted files.
 
@@ -11,19 +12,20 @@ The script can also read compressed files (`.gz`, `.zip`, `.Z`, `.bz2`).
 Fields are tab separated and headers are printed to stderr for easy parsing
 of output.
 
-Examples:
+### Examples
 
-    $ get_fasta_info.pl *.fas
+    $ ./get_fasta_info.pl dat/*.fas
     Nseqs Min.len Max.len Avg.len File
     9     643     649     647     1.fas
     Nseqs Min.len Max.len Avg.len File
     14    216     339     289     2.fas
 
-    $ ./get_fasta_info.pl *.fas  2>/dev/null | sort -k1 | awk '{print $NF,$1}'
+    $ ./get_fasta_info.pl dat/*.fas  2>/dev/null | sort -k1 | awk '{print $NF,$1}'
     2.fas 14
     1.fas 9
 
 
+### Note
 
 The `get_fasta_info.pl` is based on modified code from the internet.
 I will acknowledge the original author (as soon as I locate him/her!).
