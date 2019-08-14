@@ -20,7 +20,7 @@ of output.
     Nseqs Min.len Max.len Avg.len File
     14    216     339     289     2.fas
 
-    $ ./get_fasta_info.pl dat/*.fas  2>/dev/null | sort -k1 | awk '{print $NF,$1}'
+    $ ./get_fasta_info.pl dat/*.fas 2>/dev/null | sort -k1 | awk '{print $NF,$1}'
     2.fas 14
     1.fas 9
 
