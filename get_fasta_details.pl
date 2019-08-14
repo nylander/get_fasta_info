@@ -1,32 +1,64 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
+#===============================================================================
+=pod
 
-## Print sequence length, sequence number (in file), and FASTA header
-## Can sort in ascending/descending order on sequence length
-## Doesn't explicitly handle duplicates
-## Last chages: 12/20/2012 10:18:13 AM
-## Johan.Nylander\@abc.se
+=head2
+
+         FILE: get_fasta_details.pl
+
+        USAGE: ./get_fasta_details.pl [-s|-r] [-h] infile(s)  
+
+  DESCRIPTION: Read FASTA-formatted file and report a tab-separated list of
+               sequence length, sequence number (in file), file name, FASTA header
+               
+               Can sort in ascending/descending order on sequence length
+
+      OPTIONS: -s, --sort    Sort the output on sequence length, shortest first
+      OPTIONS: -r, --revsort Sort the output on sequence length, longest first
+      OPTIONS: -h, --help    Display help text
+
+ REQUIREMENTS: Uses perldoc for help documentation.
+
+        NOTES: "sequence number (in file)" starts at 0.
+        
+               The fasta parser doesn't explicitly handle duplicate headers!
+
+       AUTHOR: Johan Nylander (JN), johan.nylander@nrm.se
+
+      COMPANY: NBIS/NRM
+
+      VERSION: 2.0
+
+      CREATED: < 2012
+
+     REVISION: 2019-08-14 11:15:57
+
+=cut
+
+
+#===============================================================================
 
 use strict;
 use warnings;
-use Data::Dumper;
 use Getopt::Long;
 
-my %seq_hash        = ();    # key:fasta header, val: seq
-my %seq_length_hash = ();    # key:fasta header, val: seq
-my %seq_nr_hash     = ();    # key:fasta header, val: seq_nr
-my $term            = $/;
-my $sort            = 0;
-my $revsort         = 0;
+my $sort    = 0;
+my $revsort = 0;
+my $term    = $/;
 
-my $res = GetOptions(
+GetOptions(
     'sort'    => \$sort,
     'revsort' => \$revsort,
-    'help'    => sub { print "Usage: $0 [--sort] [--revsort] fastafile\n"; exit(0); },
+    'help'    => sub { exec("perldoc", $0); exit(0); },
 );
 
-die "\nTry $0 --help for more information\n\n" unless $res;
+die "Try $0 --help for more info.\n" unless @ARGV;
 
 while ( my $fastafile = shift(@ARGV) ) {
+
+    my %seq_hash        = ();
+    my %seq_length_hash = ();
+    my %seq_nr_hash     = ();
 
     my $pos = 0;
     my $id;
@@ -34,45 +66,38 @@ while ( my $fastafile = shift(@ARGV) ) {
     my $sequence;
     my $line;
 
-    open( FASTA, "<", $fastafile ) or die("Open failed: $!");
+    open my $FASTA, "<", $fastafile or die("Open failed: $!");
 
     $/ = ">";
-    while (<FASTA>) {
+    while (<$FASTA>) {
         chomp;
-        # Since the file begins with ">", the first extraction will
-        # contain only that '>', which will then get chomped, so we'll
-        # have a blank line to skip.
-        next if ( $_ eq '' );
-        ( $id, @sequencelines ) = split /\n/;
+        next if ($_ eq '');
+        ($id, @sequencelines) = split /\n/;
         $seq_nr_hash{$id} = $pos;
         $sequence = '';
         foreach $line (@sequencelines) {
             $sequence .= $line;
         }
         $seq_length_hash{$id} = length($sequence);
-        $seq_hash{$id}        = $sequence;
+        $seq_hash{$id} = $sequence;
         $pos++;
     }
+    close($FASTA);
     $/ = $term;
-}
 
-#foreach my $key (sort { $seq_length_hash{$a} cmp $seq_length_hash{$b} } keys %seq_length_hash) {
-#    print "$seq_length_hash{$key} = $key\n";
-#}
-
-my @keys = ();
-if ($sort) {
-    @keys = sort { length( $seq_hash{$a} ) <=> length( $seq_hash{$b} ) }
-      keys %seq_hash;
+    my @keys = ();
+    if ($sort) {
+        @keys = sort { length( $seq_hash{$a} ) <=> length( $seq_hash{$b} ) }
+          keys %seq_hash;
+    }
+    elsif ($revsort) {
+        @keys = sort { length( $seq_hash{$b} ) <=> length( $seq_hash{$a} ) }
+          keys %seq_hash;
+    }
+    else {
+        @keys = sort { $seq_nr_hash{$a} <=> $seq_nr_hash{$b} } keys %seq_hash;
+    }
+    foreach my $key (@keys) {
+        print STDOUT "$seq_length_hash{$key}\t$seq_nr_hash{$key}\t$fastafile\t$key\t\n";
+    }
 }
-elsif ($revsort) {
-    @keys = sort { length( $seq_hash{$b} ) <=> length( $seq_hash{$a} ) }
-      keys %seq_hash;
-}
-else {
-    @keys = sort { $seq_nr_hash{$a} <=> $seq_nr_hash{$b} } keys %seq_hash;
-}
-foreach my $key (@keys) {
-    print "$seq_nr_hash{$key}\t$seq_length_hash{$key}\t$key\n";
-}
-
