@@ -14,8 +14,8 @@
                Can sort in ascending/descending order on sequence length
 
       OPTIONS: -s, --sort    Sort the output on sequence length, shortest first
-      OPTIONS: -r, --revsort Sort the output on sequence length, longest first
-      OPTIONS: -h, --help    Display help text
+               -r, --revsort Sort the output on sequence length, longest first
+               -h, --help    Display help text
 
  REQUIREMENTS: Uses perldoc for help documentation.
 
