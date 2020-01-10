@@ -60,7 +60,7 @@
 
       CREATED: < 2009 
 
-     REVISION: 2019-08-14 09:36:22
+     REVISION: Fri 10 jan 2020 15:16:55
 
 =cut
 
@@ -150,7 +150,7 @@ sub read_file {
         ($contigs, $bases, $min, $max) = process_contig($contig, $sequence, $contigs, $bases, $min, $max);
     }
 
-    $ave = $contigs ? (sprintf "%.1f", $bases/$contigs) : 0;
+    $ave = $contigs ? (sprintf "%.0f", $bases/$contigs) : 0;
 
     print_counts($contigs, $bases, $min, $max, $ave, $file_name);
 
