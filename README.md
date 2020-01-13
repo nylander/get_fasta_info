@@ -5,15 +5,17 @@ Some useful summary tools for FASTA formatted files.
 These tools gives a brief summary of number of sequences, min, max, and average
 sequence lengths, for FASTA formatted files.
 
-## Programs and scripts
 
-# `get_fasta_info`
+## `get_fasta_info`
 
 ##### Description:
 
 Program written in C. Will report number of sequences, min/max/average sequence
-length, and file name read as tab-delimited output. Prints to both stdout and
+lengths, and file name read, as tab-delimited output. Prints to both stdout and
 stderr. Can read compressed (gzip) input files.
+
+Note: If empty sequences are present, their length (0) will still be used when
+calculating the average sequence length in the file.
 
 ##### To compile:
 
@@ -38,7 +40,7 @@ stderr. Can read compressed (gzip) input files.
     3	1	3	2	fasta.fasta.gz
 
 
-# `get_fasta_info.pl`
+## `get_fasta_info.pl`
 
 ##### Description:
 
@@ -74,7 +76,7 @@ will acknowledge the original author (as soon as I locate him/her!). If you
 recognize the code, please send me a note!
 
 
-# `get_fasta_details.pl`
+## `get_fasta_details.pl`
 
 ##### Description:
 

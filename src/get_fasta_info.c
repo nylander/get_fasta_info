@@ -1,10 +1,13 @@
 /*        
 *          File: get_fasta_info.c
 *            By: Johan Nylander
-* Last modified: fre jan 10, 2020  03:08
+* Last modified: mån jan 13, 2020  11:12
 *   Description: Get min/max/avg sequence length in fasta.
 *                Can read compressed (gzip) files.
 *                Prints to both stdout and stderr.
+*                Note: if empty sequences are present,
+*                they are still included when calculating
+*                the average sequence length.
 *       Compile: gcc -Wall -o get_fasta_info get_fasta_info.c -lm -lz
 *           Run: get_fasta_info fasta.fas
 */
@@ -24,7 +27,7 @@ int main (int argc, char **argv) {
     long int sum;
     long int seqlen;
     long int nseqs;
-    float meanlen;
+    float avelen;
     char r; // r is the character currently read
     int inheader;
     char *fname;
@@ -82,18 +85,23 @@ int main (int argc, char **argv) {
                     }
                 }
                 else if (r == '>') {
-                    ++nseqs;
                     inheader = 1;
-                    if (seqlen > 0) {
-                        if (seqlen > maxlen) {
-                            maxlen = seqlen;
+                    if (nseqs > 0) {
+                        if (seqlen > 0) {
+                            if (seqlen > maxlen) {
+                                maxlen = seqlen;
+                            }
+                            if (seqlen < minlen) {
+                                minlen = seqlen;
+                            }
+                            sum += seqlen;
                         }
-                        if (seqlen < minlen) {
-                            minlen = seqlen;
+                        else {
+                            minlen = 0;
                         }
-                        sum += seqlen;
                         seqlen = 0;
                     }
+                    ++nseqs;
                 }
                 else {
                     if (r != '\n') {
@@ -103,20 +111,28 @@ int main (int argc, char **argv) {
             }
 
             // Take care of last seqlen
-            if (seqlen > 0) {
-                if (seqlen > maxlen) {
-                    maxlen = seqlen;
-                }
-                if (seqlen < minlen) {
-                    minlen = seqlen;
-                }
-                sum += seqlen;
+            if (seqlen > maxlen) {
+                maxlen = seqlen;
+            }
+            if (seqlen < minlen) {
+                minlen = seqlen;
+            }
+            sum += seqlen;
+
+            // If all empty sequences
+            if (minlen == INT_MAX && maxlen == INT_MIN) {
+                minlen = maxlen = 0;
             }
 
-            meanlen = 1.0 * sum / nseqs;
+            if (sum > 0) {
+                avelen = 1.0 * sum / nseqs;
+            }
+            else {
+                avelen = 0;
+            }
 
             fprintf(stderr, "%s", "Nseqs\tMin.len\tMax.len\tAvg.len\tFile\n");
-            fprintf(stdout, "%ld\t%ld\t%ld\t%g\t%s\n", nseqs, minlen, maxlen, round(meanlen), basename(fname));
+            fprintf(stdout, "%ld\t%ld\t%ld\t%g\t%s\n", nseqs, minlen, maxlen, round(avelen), basename(fname));
 
             minlen = INT_MAX;
             maxlen = INT_MIN;
