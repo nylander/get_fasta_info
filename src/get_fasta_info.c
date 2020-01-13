@@ -1,7 +1,7 @@
 /*        
 *          File: get_fasta_info.c
 *            By: Johan Nylander
-* Last modified: mån jan 13, 2020  11:28
+* Last modified: mån jan 13, 2020  11:33
 *   Description: Get min/max/avg sequence length in fasta.
 *                Can read compressed (gzip) files.
 *                Prints to both stdout and stderr.
@@ -151,7 +151,7 @@ int main (int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
 
-    exit(0);
+    return EXIT_SUCCESS;
 
 }
 
