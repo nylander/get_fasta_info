@@ -1,13 +1,10 @@
 /*        
 *          File: get_fasta_info.c
 *            By: Johan Nylander
-* Last modified: mån jan 13, 2020  11:33
+* Last modified: mån jan 13, 2020  11:52
 *   Description: Get min/max/avg sequence length in fasta.
 *                Can read compressed (gzip) files.
 *                Prints to both stdout and stderr.
-*                Note: if empty sequences are present,
-*                they are still included when calculating
-*                the average sequence length.
 *       Compile: gcc -Wall -o get_fasta_info get_fasta_info.c -lm -lz
 *           Run: get_fasta_info fasta.fas
 */
@@ -31,23 +28,27 @@ int main (int argc, char **argv) {
     float avelen;
     char r; // r is the character currently read
     int inheader;
+    int verbose = 1;
     char *fname;
     extern char *optarg;
     extern int optind;
     int c, err = 0;
 
-    static char usage[] = "Usage: %s [-h] infile(s)\n";
+    static char usage[] = "\nGet basic summary info about fasta formatted files.\n\nUsage:\n\n %s [-h][-n] infile(s).\n\n  -h is help\n  -n is noverbose\n\n  infile should be in fasta format.\n\n";
 
     if (argc == 1) {
         fprintf(stderr, usage, argv[0]);
         exit(EXIT_FAILURE);
     }
 
-    while ((c = getopt(argc, argv, "h")) != -1) {
+    while ((c = getopt(argc, argv, "hn")) != -1) {
         switch (c) {
             case 'h':
                 fprintf(stderr, usage, argv[0]);
                 exit(1);
+                break;
+            case 'n':
+                verbose = 0;
                 break;
             case '?':
                 err = 1;
@@ -132,7 +133,9 @@ int main (int argc, char **argv) {
                 avelen = 0;
             }
 
-            fprintf(stderr, "%s", "Nseqs\tMin.len\tMax.len\tAvg.len\tFile\n");
+            if (verbose) {
+                fprintf(stderr, "%s", "Nseqs\tMin.len\tMax.len\tAvg.len\tFile\n");
+            }
             fprintf(stdout, "%ld\t%ld\t%ld\t%g\t%s\n", nseqs, minlen, maxlen, round(avelen), basename(fname));
 
             minlen = INT_MAX;

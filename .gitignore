@@ -1,2 +1,4 @@
 Old/
 *.swp
+*.o
+src/get_fasta_info

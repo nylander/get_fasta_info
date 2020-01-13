@@ -25,7 +25,8 @@ calculating the average sequence length in the file.
 
 ##### Options:
 
-- `-h` prints brief Usage information
+- `-h` print brief Usage information
+- `-n` do not print the output header
 
 ##### Examples:
 
@@ -33,6 +34,10 @@ calculating the average sequence length in the file.
     Nseqs	Min.len	Max.len	Avg.len	File
     3	1	3	2	fasta.fasta
     Nseqs	Min.len	Max.len	Avg.len	File
+    3	1	3	2	fasta.fasta.gz
+
+    $ src/get_fasta_info -n dat/fasta.*
+    3	1	3	2	fasta.fasta
     3	1	3	2	fasta.fasta.gz
 
     $ src/get_fasta_info dat/fasta.* 2>/dev/null
@@ -51,8 +56,8 @@ can also read `bzip` format (if `bzip2` is installed) in addition to `.gz`,
 
 ##### Options:
 
-- `-h` prints brief Usage information
-- `-n` do not print the header
+- `-h` print brief Usage information
+- `-n` do not print the outputoutput  header
 
 ##### Examples:
 
