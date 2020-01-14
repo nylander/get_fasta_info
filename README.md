@@ -1,9 +1,9 @@
-# Get FASTA info
+# Get FAST{A,Q} info
 
-Some useful summary tools for FASTA formatted files.
+Some useful summary tools for FASTA and FASTQ formatted files.
 
 These tools gives a brief summary of number of sequences, min, max, and average
-sequence lengths, for FASTA formatted files.
+sequence lengths, for FASTA or FASTQ formatted files.
 
 
 ## `get_fasta_info`
@@ -21,11 +21,10 @@ calculating the average sequence length in the file.
 
     cd src
     make
-    make test
 
 ##### Options:
 
-- `-h` print brief Usage information
+- `-h` print brief usage information
 - `-n` do not print the output header
 
 ##### Examples:
@@ -45,6 +44,40 @@ calculating the average sequence length in the file.
     3	1	3	2	fasta.fasta.gz
 
 
+## `get_fastq_info`
+
+##### Description:
+
+Program written in C. Will report number of sequences, min/max/average sequence
+lengths, and file name read, as tab-delimited output. Prints to both stdout and
+stderr. Can read compressed (gzip) input files.
+
+Note: If empty sequences are present, their length (0) will still be used when
+calculating the average sequence length in the file.
+
+##### To compile:
+
+    cd src
+    make
+
+##### Options:
+
+- `-h` print brief usage information
+- `-n` do not print the output header
+
+##### Examples:
+
+    $ src/get_fastq_info dat/fastq.*
+    Nseqs	Min.len	Max.len	Avg.len	File
+    4	35	49	45	fastq.fastq
+    Nseqs	Min.len	Max.len	Avg.len	File
+    1000	49	49	49	fastq.fq.gz
+
+    $ src/get_fastq_info -n dat/fastq.*
+    4	35	49	45	fastq.fastq
+    1000	49	49	49	fastq.fq.gz
+
+
 ## `get_fasta_info.pl`
 
 ##### Description:
@@ -62,11 +95,11 @@ can also read `bzip` format (if `bzip2` is installed) in addition to `.gz`,
 ##### Examples:
 
     $ scripts/get_fasta_info.pl dat/*.fas
-    Nseqs Min.len Max.len Avg.len File
-    9     643     649     647     1.fas
-    Nseqs Min.len Max.len Avg.len File
-    14    216     339     290     2.fas
-    
+    Nseqs	Min.len	Max.len	Avg.len	File
+    9	643	649	647	dat/1.fas
+    Nseqs	Min.len	Max.len	Avg.len	File
+    14	216	339	290	dat/2.fas
+
     $ scripts/get_fasta_info.pl -n dat/*.fas
     9	643	649	647	dat/1.fas
     14	216	339	290	dat/2.fas
@@ -99,11 +132,12 @@ Can sort in ascending/descending order on sequence length.
 ##### Examples:
 
     $ scripts/get_fasta_details.pl dat/*.fas
-    649	0	dat/1.fas	gi|256009056|gb|ACU54623.1| ...	
-    643	1	dat/1.fas	gi|586972334|gb|EWT07678.1| ...	
+    649	0	dat/1.fas	gi|256009056|gb|ACU54623.1| ...
+    643	1	dat/1.fas	gi|586972334|gb|EWT07678.1| ...
     645	2	dat/1.fas	gi|908398554|ref|WP_049755449.1| ...
     ...
     318	0	dat/2.fas	gi|949018528|gb|KRO28616.1| ...
     283	1	dat/2.fas	gi|949023402|gb|KRO32148.1| ...
     315	2	dat/2.fas	gi|949028303|gb|KRO35658.1| ...
     ...
+
