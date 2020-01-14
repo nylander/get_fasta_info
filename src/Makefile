@@ -1,5 +1,5 @@
-# Makefile for get_fasta_info.c
-# Last modified: Tue Jan 14, 2020  07:07PM
+# Makefile for get_fasta_info.c and get_fastq_info.c
+# Last modified: Tue Jan 14, 2020  07:18PM
 # Johan.Nylander@{nrm|nbis}.se
 
 SRC = get_fasta_info.c get_fastq_info.c
