@@ -8,7 +8,7 @@ sequence lengths, for FASTA or FASTQ formatted files.
 
 ## `get_fasta_info`
 
-##### Description:
+#### Description:
 
 Program written in C. Will report number of sequences, min/max/average sequence
 lengths, and file name read, as tab-delimited output. Prints to both stdout and
@@ -17,17 +17,17 @@ stderr. Can read compressed (gzip) input files.
 Note: If empty sequences are present, their length (0) will still be used when
 calculating the average sequence length in the file.
 
-##### To compile:
+#### To compile:
 
     cd src
     make
 
-##### Options:
+#### Options:
 
 - `-h` print brief usage information
 - `-n` do not print the output header
 
-##### Examples:
+#### Examples:
 
     $ src/get_fasta_info dat/fasta.*
     Nseqs	Min.len	Max.len	Avg.len	File
@@ -44,9 +44,25 @@ calculating the average sequence length in the file.
     3	1	3	2	fasta.fasta.gz
 
 
+##### Which files are not aligned (all of the same length)?
+
+    $ src/get_fasta_info -n dat/*.fas | \
+        awk '$2 != $3 {print $NF}'
+
+##### Which files have 9 sequences, and are aligned (all of the same length)?
+
+    $ src/get_fasta_info -n dat/*.fas | \
+        awk '$1 == 9 && $2 == $3 {print $NF}'
+
+##### Which files have zero-length sequences?
+
+    $ src/get_fasta_info -n dat/*.fas | \
+        awk '!$2 {print $NF}'
+
+
 ## `get_fastq_info`
 
-##### Description:
+#### Description:
 
 Program written in C. Will report number of sequences, min/max/average sequence
 lengths, and file name read, as tab-delimited output. Prints to both stdout and
@@ -55,17 +71,17 @@ stderr. Can read compressed (gzip) input files.
 Note: If empty sequences are present, their length (0) will still be used when
 calculating the average sequence length in the file.
 
-##### To compile:
+#### To compile:
 
     cd src
     make
 
-##### Options:
+#### Options:
 
 - `-h` print brief usage information
 - `-n` do not print the output header
 
-##### Examples:
+#### Examples:
 
     $ src/get_fastq_info dat/fastq.*
     Nseqs	Min.len	Max.len	Avg.len	File
@@ -80,19 +96,19 @@ calculating the average sequence length in the file.
 
 ## `get_fasta_info.pl`
 
-##### Description:
+#### Description:
 
 Perl-script with the same basic functionality as the (faster) C-program, but
 can also read `bzip` format (if `bzip2` is installed) in addition to `.gz`,
 `.zip`, and `.Z`. It does not, however, handle compressed tar archives
 (`.tar.gz`, etc).
 
-##### Options:
+#### Options:
 
 - `-h` print brief Usage information
 - `-n` do not print the outputoutput  header
 
-##### Examples:
+#### Examples:
 
     $ scripts/get_fasta_info.pl dat/*.fas
     Nseqs	Min.len	Max.len	Avg.len	File
@@ -116,20 +132,20 @@ recognize the code, please send me a note!
 
 ## `get_fasta_details.pl`
 
-##### Description:
+#### Description:
 
 Perl-script to read FASTA-formatted file and report a tab-separated list of
 sequence length, sequence number (in file), file name, FASTA header
                   
 Can sort in ascending/descending order on sequence length.
 
-##### Options:
+#### Options:
 
 - `-s`, `--sort`    Sort the output on sequence length, shortest first
 - `-r`, `--revsort` Sort the output on sequence length, longest first
 - `-h`, `--help`    Display help text
 
-##### Examples:
+#### Examples:
 
     $ scripts/get_fasta_details.pl dat/*.fas
     649	0	dat/1.fas	gi|256009056|gb|ACU54623.1| ...
