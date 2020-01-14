@@ -1,36 +1,19 @@
 # Makefile for get_fasta_info.c
-# Last modified: fre jan 10, 2020  04:01
+# Last modified: Tue Jan 14, 2020  07:07PM
 # Johan.Nylander@{nrm|nbis}.se
 
-CC     = gcc
-GDB    = gdb
-CFLAGS = -Wall -O3
+SRC = get_fasta_info.c get_fastq_info.c
+
+BIN = $(patsubst %.c,%,$(SRC))
+
+OBJ = $(patsubst %.c,%.o,$(SRC))
+
 LDLIBS = -lm -lz
-SRC    = get_fasta_info.c
-OBJ    = $(SRC:%.c=%.o)
-PROG   = get_fasta_info
-RM     = rm -f
-INFILE1 = ../dat/fasta.fasta
-INFILE2 = ../dat/fasta.fasta.gz
 
-.PHONY: all debug test clean
-
-all: $(PROG)
-
-$(OBJ): $(SRC)
-
-$(PROG): $(OBJ)
-	$(CC) $(CFLAGS) -o $@ $(OBJ) $(LDLIBS)
-
-debug: CFLAGS += -g
-
-debug: $(PROG)
-	$(GDB) ./$(PROG)
-
-test: $(PROG) $(INFILE1) $(INFILE2)
-	./$(PROG) $(INFILE1) $(INFILE2)
+all: $(BIN)
 
 clean:
-	@ $(RM) $(OBJ) $(PROG)
+	rm -f $(BIN) $(OBJ)
 
+.PHONY: all clean
 
