@@ -1,7 +1,7 @@
 /*        
 *          File: get_fastq_info.c
 *            By: Johan Nylander
-* Last modified: Tue Jan 14, 2020  06:53PM
+* Last modified: tor jan 16, 2020  01:06
 *   Description: Get min/max/avg sequence length in fastq.
 *                Can read compressed (gzip) files.
 *                Prints to both stdout and stderr.
@@ -24,8 +24,10 @@ int main (int argc, char **argv) {
     char r; // r is the character currently read
     extern char *optarg;
     extern int optind;
-    float avelen;
+    float avelen = 0;
+    float avequal = 0;
     int c;
+    int q;
     int err = 0;
     int linecounter;
     int verbose = 1;
@@ -34,6 +36,8 @@ int main (int argc, char **argv) {
     long int nseqs;
     long int seqlen;
     long int sum;
+    long int qsum;
+    int sqsum;
 
     static char usage[] = "\nGet basic summary info about fastq formatted files.\n\nUsage:\n\n %s [-h][-n] infile(s).\n\n  -h is help\n  -n is noverbose\n\n  infile should be in fastq format (gzipped or not).\n\n";
 
@@ -94,9 +98,13 @@ int main (int argc, char **argv) {
                             }
                             sum += seqlen;
                         }
+                        if (sqsum > 0) {
+                            qsum += round( sqsum / seqlen);
+                        }
                         ++nseqs;
                         linecounter = 0;
                         seqlen = 0;
+                        sqsum = 0;
                     }
                 }
                 if (linecounter == 1) {
@@ -104,15 +112,22 @@ int main (int argc, char **argv) {
                         ++seqlen;
                     }
                 }
+                else if (linecounter == 3) {
+                    if (! isspace(r)) {
+                        q = r - 33;
+                        sqsum += q;
+                    }
+                }
             }
 
             avelen = 1.0 * sum / nseqs;
+            avequal = 1.0 * qsum / nseqs;
 
             if (verbose) {
-                fprintf(stderr, "%s", "Nseqs\tMin.len\tMax.len\tAvg.len\tFile\n");
+                fprintf(stderr, "%s", "Nseqs\tMin.len\tMax.len\tAvg.len\tAvg.qual\tFile\n");
             }
 
-            fprintf(stdout, "%ld\t%ld\t%ld\t%g\t%s\n", nseqs, minlen, maxlen, round(avelen), basename(fname));
+            fprintf(stdout, "%ld\t%ld\t%ld\t%g\t%g\t%s\n", nseqs, minlen, maxlen, round(avelen), round(avequal), basename(fname));
 
             gzclose(zfp);
 
@@ -124,7 +139,7 @@ int main (int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
 
-    exit(0);
+    exit(EXIT_SUCCESS);
 
 }
 
