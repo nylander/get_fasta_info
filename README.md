@@ -11,8 +11,8 @@ sequence lengths, for FASTA or FASTQ formatted files.
 #### Description:
 
 Program written in C. Will report number of sequences, min/max/average sequence
-lengths, and file name read, as tab-delimited output. Prints to both stdout and
-stderr. Can read compressed (gzip) input files.
+lengths, and file name read, as tab-delimited output. Prints to both STDOUT and
+STDERR. Can read compressed (gzip) input files.
 
 Note: If empty sequences are present, their length (0) will still be used when
 calculating the average sequence length in the file.
@@ -66,7 +66,7 @@ calculating the average sequence length in the file.
 
 Program written in C. Will report number of sequences, min/max/average sequence
 lengths, and average read quality, as tab-delimited output. Prints to both
-stdout and stderr. Can read compressed (gzip) input files.
+STDOUT and STDERR. Can read compressed (gzip) input files.
 
 Note: If empty sequences are present, their length (0) will still be used when
 calculating the average sequence length in the file.
@@ -113,7 +113,7 @@ can also read `bzip` format (if `bzip2` is installed) in addition to `.gz`,
 #### Options:
 
 - `-h` print brief Usage information
-- `-n` do not print the outputoutput  header
+- `-n` do not print the output header
 
 #### Examples:
 
