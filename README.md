@@ -65,8 +65,8 @@ calculating the average sequence length in the file.
 #### Description:
 
 Program written in C. Will report number of sequences, min/max/average sequence
-lengths, and file name read, as tab-delimited output. Prints to both stdout and
-stderr. Can read compressed (gzip) input files.
+lengths, and average read quality, as tab-delimited output. Prints to both
+stdout and stderr. Can read compressed (gzip) input files.
 
 Note: If empty sequences are present, their length (0) will still be used when
 calculating the average sequence length in the file.
@@ -80,18 +80,25 @@ calculating the average sequence length in the file.
 
 - `-h` print brief usage information
 - `-n` do not print the output header
+- `-q` report average read quality
 
 #### Examples:
 
     $ src/get_fastq_info dat/fastq.*
     Nseqs	Min.len	Max.len	Avg.len	File
-    4	35	49	45	fastq.fastq
+    4	150	150	150	fastq.fastq
     Nseqs	Min.len	Max.len	Avg.len	File
-    1000	49	49	49	fastq.fq.gz
+    1000	78	150	150	fastq.fq.gz
 
-    $ src/get_fastq_info -n dat/fastq.*
-    4	35	49	45	fastq.fastq
-    1000	49	49	49	fastq.fq.gz
+    $ src/get_fastq_info -q dat/fastq.*
+    Nseqs	Min.len	Max.len	Avg.len	Avg.qual	File
+    4	150	150	150	36	fastq.fastq
+    Nseqs	Min.len	Max.len	Avg.len	Avg.qual	File
+    1000	78	150	150	35	fastq.fq.gz
+
+    $ src/get_fastq_info -n -q dat/fastq.*
+    4	150	150	150	36	fastq.fastq
+    1000	78	150	150	35	fastq.fq.gz
 
 
 ## `get_fasta_info.pl`
