@@ -1,7 +1,7 @@
 /*        
 *          File: get_fastq_info.c
 *            By: Johan Nylander
-* Last modified: Tue Jan 14, 2020  06:53PM
+* Last modified: Wed Jan 29, 2020  12:30PM
 *   Description: Get min/max/avg sequence length in fastq.
 *                Can read compressed (gzip) files.
 *                Prints to both stdout and stderr.
@@ -24,7 +24,7 @@ int main (int argc, char **argv) {
     char r; // r is the character currently read
     extern char *optarg;
     extern int optind;
-    float avelen;
+    float avelen = 0.0f;
     int c;
     int err = 0;
     int linecounter;
@@ -124,7 +124,7 @@ int main (int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
 
-    exit(0);
+    return EXIT_SUCCESS;
 
 }
 
