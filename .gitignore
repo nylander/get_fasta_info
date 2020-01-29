@@ -3,3 +3,4 @@ Old/
 *.o
 src/get_fasta_info
 src/get_fastq_info
+src/NOTES.md
