@@ -1,12 +1,12 @@
 /*        
 *          File: get_fastq_info.c
 *            By: Johan Nylander
-* Last modified: Wed Jan 29, 2020  05:22PM
+* Last modified: tor jan 30, 2020  11:35
 *   Description: Get min/max/avg sequence length in fastq.
 *                Can read compressed (gzip) files.
 *                Prints to both stdout and stderr.
 *                Can report average read quality (phred, ASCII_BASE=33) score.
-*       Compile: gcc -Wall -o get_fastq_info get_fastq_info.c -lm -lz
+*       Compile: gcc -Wall -03 -funroll-loops -o get_fastq_info get_fastq_info.c -lm -lz
 *           Run: get_fastq_info -q fastq.fq.gz
 */
 
@@ -28,18 +28,18 @@ int main (int argc, char **argv) {
     float avelen = 0.0f;
     float avequal = 0.0f;
     int c;
-    int q;
     int err = 0;
     int linecounter;
-    int verbose = 1;
+    int q;
     int quality = 0;
+    int sqsum = 0;
+    int verbose = 1;
     long int maxlen;
     long int minlen;
     long int nseqs;
+    long int qsum = 0;
     long int seqlen;
     long int sum;
-    long int qsum;
-    int sqsum;
 
     static char usage[] = "\nGet basic summary info about fastq formatted files.\n\nUsage:\n\n %s [-h][-n][-q] infile(s).\n\n  -h help\n  -n noverbose\n  -q show avg. read qual (ASCII_BASE=33)\n\n\n  infile should be in fastq format (gzipped or not).\n\n";
 
