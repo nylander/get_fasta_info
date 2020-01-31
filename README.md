@@ -4,7 +4,7 @@ Some useful summary tools for FASTA and FASTQ formatted files.
 
 These tools gives a brief summary of number of sequences, min, max, and average
 sequence lengths, for FASTA or FASTQ formatted files.
-
+ 
 
 ## `get_fasta_info`
 
@@ -163,4 +163,28 @@ Can sort in ascending/descending order on sequence length.
     283	1	dat/2.fas	gi|949023402|gb|KRO32148.1| ...
     315	2	dat/2.fas	gi|949028303|gb|KRO35658.1| ...
     ...
+
+
+## Tip on decompression
+
+For the tools that can read compressed input files, de-compression of large
+files will take a proportionally large amount of the total compute (real) time.
+One way to try to minimize this is to use an auxiliary compression tool that
+can do decompression in parallel. Here is an example using `pigz`
+((https://zlib.net/pigz/)[https://zlib.net/pigz/]) on a 1.2G input file.
+
+Note that we use process substitution (`<()`) to allow the output from `pigz`
+to be used as input to the program. This will also mean that the name of the
+device ("63" in the example below) is printed in the output, and not the
+original file name. Time saved is dependent on the system.
+
+    $ TIMEFORMAT=%0lR && time get_fasta_info file.fas.gz
+    Nseqs	Min.len	Max.len	Avg.len	File
+    33173436	35	150	150	file.fas.gz
+    0m40s
+
+    $ TIMEFORMAT=%0lR && time get_fasta_info <(pigz -d -c file.fas.gz)
+    Nseqs	Min.len	Max.len	Avg.len	File
+    33173436	35	150	150	63
+    0m23s
 
