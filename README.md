@@ -175,8 +175,8 @@ can do decompression in parallel. Here is an example using `pigz`
 
 Note that we use process substitution (`<()`) to allow the output from `pigz`
 to be used as input to the program. This will also mean that the name of the
-device ("63" in the example below) is printed in the output, and not the
-original file name. Time saved is dependent on the system.
+file descriptor ("63" in the example below) is printed in the output, and not
+the original file name. Time saved is dependent on the system.
 
     $ TIMEFORMAT=%0lR && time get_fasta_info file.fas.gz
     Nseqs	Min.len	Max.len	Avg.len	File
