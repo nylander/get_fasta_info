@@ -1,6 +1,7 @@
 TODO
 NOTES.md
 Old/
+benchmark/
 *.swp
 *.o
 src/get_fasta_info
