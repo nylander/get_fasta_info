@@ -10,9 +10,11 @@ sequence lengths, for FASTA or FASTQ formatted files.
 
 #### Description:
 
-Program written in C. Will report number of sequences, min/max/average sequence
-lengths, and file name read, as tab-delimited output. Prints to both STDOUT and
-STDERR. Can read compressed (gzip) input files.
+Program written in C. Distributed under the MIT license. 
+
+Will report number of sequences, min/max/average sequence lengths, and file
+name read, as tab-delimited output. Prints to both STDOUT and STDERR. Can read
+compressed (gzip) input files.
 
 Note: If empty sequences are present, their length (0) will still be used when
 calculating the average sequence length in the file.
@@ -64,7 +66,9 @@ calculating the average sequence length in the file.
 
 #### Description:
 
-Program written in C. Will report number of sequences, min/max/average sequence
+Program written in C. Distributed under the MIT license.
+
+Will report number of sequences, min/max/average sequence
 lengths, and average read quality, as tab-delimited output. Prints to both
 STDOUT and STDERR. Can read compressed (gzip) input files.
 
@@ -142,7 +146,9 @@ recognize the code, please send me a note!
 #### Description:
 
 Perl-script to read FASTA-formatted file and report a tab-separated list of
-sequence length, sequence number (in file), file name, FASTA header
+sequence length, sequence number (in file), file name, FASTA header.
+
+Distributed under the MIT license.
                   
 Can sort in ascending/descending order on sequence length.
 
