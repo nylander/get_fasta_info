@@ -177,7 +177,7 @@ For the tools that can read compressed input files, de-compression of large
 files will take a proportionally large amount of the total compute (real) time.
 One way to try to minimize this is to use an auxiliary compression tool that
 can do decompression in parallel. Here is an example using `pigz`
-((https://zlib.net/pigz/)[https://zlib.net/pigz/]) on a 1.2G input file.
+([https://zlib.net/pigz/](https://zlib.net/pigz/)) on a 1.2G input file.
 
 Note that we use process substitution (`<()`) to allow the output from `pigz`
 to be used as input to the program. This will also mean that the name of the
