@@ -1,10 +1,12 @@
 /*        
 *          File: get_fasta_info.c
 *            By: Johan Nylander
-* Last modified: mån maj 11, 2020  02:18
+* Last modified: mån maj 11, 2020  05:01
 *   Description: Get min/max/avg sequence length in fasta.
 *                Optionally, report min/max/avg missing data.
-*                Mising data is any of the symbols 'Nn?-'.
+*                Mising data is any of the symbols 'Nn?-' and
+*                is reported as the fraction of missing data
+*                in the sequence.
 *                Can read compressed (gzip) files.
 *                Prints to both stdout and stderr.
 *       Compile: gcc -Wall -O3 -o get_fasta_info get_fasta_info.c -lm -lz
@@ -46,16 +48,18 @@ int main (int argc, char **argv) {
     long int minlen;
     long int maxlen;
     long int lensum;
-    long int ngaps;
-    long int gapsum;
-    long int mingaps;
-    long int maxgaps;
+    long int ngap;
+    //long int ngapsum;
+    float fgapsum;
+    float mingap;
+    float maxgap;
     float avelen = 0.0f;
-    float avegaps = 0.0f;
+    float avegap = 0.0f;
+    float fgap = 0.0f;
     char r; // r is the character currently read
     int inheader;
     int verbose = 1;
-    int countgaps = 0;
+    int countgap = 0;
     char *fname;
     extern char *optarg;
     extern int optind;
@@ -78,7 +82,7 @@ int main (int argc, char **argv) {
                 verbose = 0;
                 break;
             case 'g':
-                countgaps = 1;
+                countgap = 1;
                 break;
             case '?':
                 err = 1;
@@ -109,10 +113,11 @@ int main (int argc, char **argv) {
             nseqs = 0;
             seqlen = 0;
             lensum = 0;
-            mingaps = INT_MAX;
-            maxgaps = INT_MIN;
-            ngaps = 0;
-            gapsum = 0;
+            ngap = 0;
+            //ngapsum = 0;
+            mingap = 100.0f;
+            maxgap = 0.0f;
+            fgapsum = 0.0f;
 
             while ((r = gzgetc(zfp)) != EOF) {
                 if (inheader == 1) {
@@ -135,24 +140,24 @@ int main (int argc, char **argv) {
                         else {
                             minlen = 0;
                         }
-                        seqlen = 0;
-                    }
-                    if (countgaps == 1) {
-                        if (nseqs > 0) {
-                            if (ngaps > 0) {
-                                if (ngaps > maxgaps) {
-                                    maxgaps = ngaps;
+                        if (countgap == 1) {
+                            if (ngap > 0) {
+                                // Here we wish to calculate the fraction of gaps
+                                fgap = ((float) ngap / (float) seqlen) * 100.0;
+                                if (fgap > maxgap) {
+                                    maxgap = fgap;
                                 }
-                                if (ngaps < mingaps) {
-                                    mingaps = ngaps;
+                                if (fgap < mingap) {
+                                    mingap = fgap;
                                 }
-                                gapsum += ngaps;
+                                fgapsum = fgapsum + fgap;
                             }
                             else {
-                                mingaps = 0;
+                                mingap = 0;
                             }
-                            ngaps = 0;
+                            ngap = 0;
                         }
+                        seqlen = 0;
                     }
                     ++nseqs;
                 }
@@ -160,9 +165,9 @@ int main (int argc, char **argv) {
                     if (!isspace(r)) {
                         ++seqlen;
                     }
-                    if (countgaps == 1) {
+                    if (countgap == 1) {
                         if (r == '-' || r == 'n' || r == 'N' || r == '?') {
-                            ++ngaps;
+                            ++ngap;
                         }
                     }
                 }
@@ -177,13 +182,16 @@ int main (int argc, char **argv) {
             }
             lensum += seqlen;
 
-            if (ngaps > maxgaps) {
-                maxgaps = ngaps;
+            if (countgap == 1) {
+                fgap = ((float) ngap / (float) seqlen) * 100.0;
+                if (fgap > maxgap) {
+                    maxgap = fgap;
+                }
+                if (fgap < mingap) {
+                    mingap = fgap;
+                }
+                fgapsum = fgapsum + fgap;
             }
-            if (ngaps < mingaps) {
-                mingaps = ngaps;
-            }
-            gapsum += ngaps;
 
             // If all empty sequences
             if (minlen == INT_MAX && maxlen == INT_MIN) {
@@ -197,26 +205,26 @@ int main (int argc, char **argv) {
                 avelen = 0.0;
             }
             
-            if (countgaps == 1) {
-                if (gapsum > 0) {
-                    avegaps = 1.0 * gapsum / nseqs;
+            if (countgap == 1) {
+                if (fgapsum > 0.0) {
+                    avegap = fgapsum / nseqs;
                 }
                 else {
-                    avegaps = 0.0;
+                    avegap = 0.0;
                 }
             }
 
             if (verbose) {
-                if (countgaps == 1) {
-                    fprintf(stderr, "%s", "Nseqs\tMin.len\tMax.len\tAvg.len\tMin.gaps\tMax.gaps\tAvg.gaps\tFile\n");
+                if (countgap == 1) {
+                    fprintf(stderr, "%s", "Nseqs\tMin.len\tMax.len\tAvg.len\tMin.gap\tMax.gap\tAvg.gap\tFile\n");
                 }
                 else {
                     fprintf(stderr, "%s", "Nseqs\tMin.len\tMax.len\tAvg.len\tFile\n");
                 }
             }
 
-            if (countgaps == 1) {
-                fprintf(stdout, "%ld\t%ld\t%ld\t%g\t%ld\t%ld\t%g\t%s\n", nseqs, minlen, maxlen, round(avelen), mingaps, maxgaps, round(avegaps), basename(fname));
+            if (countgap == 1) {
+                fprintf(stdout, "%ld\t%ld\t%ld\t%g\t%.2f\t%.2f\t%.2f\t%s\n", nseqs, minlen, maxlen, round(avelen), mingap, maxgap, avegap, basename(fname));
             }
             else {
                 fprintf(stdout, "%ld\t%ld\t%ld\t%g\t%s\n", nseqs, minlen, maxlen, round(avelen), basename(fname));
@@ -228,11 +236,11 @@ int main (int argc, char **argv) {
             seqlen = 0;
             lensum = 0;
 
-            if (countgaps == 1) {
-                mingaps = INT_MAX;
-                maxgaps = INT_MIN;
-                ngaps = 0;
-                gapsum = 0;
+            if (countgap == 1) {
+                mingap = 0.0f;
+                maxgap = 100.0f;
+                ngap = 0;
+                //ngapsum = 0;
             }
 
             gzclose(zfp);
