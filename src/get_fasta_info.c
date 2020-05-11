@@ -1,7 +1,7 @@
 /*        
 *          File: get_fasta_info.c
 *            By: Johan Nylander
-* Last modified: mån maj 11, 2020  05:01
+* Last modified: mån maj 11, 2020  05:07
 *   Description: Get min/max/avg sequence length in fasta.
 *                Optionally, report min/max/avg missing data.
 *                Mising data is any of the symbols 'Nn?-' and
@@ -49,7 +49,6 @@ int main (int argc, char **argv) {
     long int maxlen;
     long int lensum;
     long int ngap;
-    //long int ngapsum;
     float fgapsum;
     float mingap;
     float maxgap;
@@ -114,9 +113,9 @@ int main (int argc, char **argv) {
             seqlen = 0;
             lensum = 0;
             ngap = 0;
-            //ngapsum = 0;
-            mingap = 100.0f;
-            maxgap = 0.0f;
+            //mingap = 100.0f; //100.0f
+            mingap = 1.0f; //100.0f
+            maxgap = 0.0f;   //0.0f
             fgapsum = 0.0f;
 
             while ((r = gzgetc(zfp)) != EOF) {
@@ -143,7 +142,8 @@ int main (int argc, char **argv) {
                         if (countgap == 1) {
                             if (ngap > 0) {
                                 // Here we wish to calculate the fraction of gaps
-                                fgap = ((float) ngap / (float) seqlen) * 100.0;
+                                //fgap = ((float) ngap / (float) seqlen) * 100.0; //* 100.0
+                                fgap = ((float) ngap / (float) seqlen); //* 100.0
                                 if (fgap > maxgap) {
                                     maxgap = fgap;
                                 }
@@ -183,7 +183,8 @@ int main (int argc, char **argv) {
             lensum += seqlen;
 
             if (countgap == 1) {
-                fgap = ((float) ngap / (float) seqlen) * 100.0;
+                //fgap = ((float) ngap / (float) seqlen) * 100.0; //* 100.0
+                fgap = ((float) ngap / (float) seqlen);
                 if (fgap > maxgap) {
                     maxgap = fgap;
                 }
@@ -237,10 +238,10 @@ int main (int argc, char **argv) {
             lensum = 0;
 
             if (countgap == 1) {
-                mingap = 0.0f;
-                maxgap = 100.0f;
+                //mingap = 100.0f; //100.0f
+                mingap = 1.0f; //100.0f
+                maxgap = 0.0f;   //0.0f
                 ngap = 0;
-                //ngapsum = 0;
             }
 
             gzclose(zfp);
