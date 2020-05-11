@@ -1,11 +1,13 @@
 /*        
 *          File: get_fasta_info.c
 *            By: Johan Nylander
-* Last modified: tis mar 24, 2020  02:41
+* Last modified: mån maj 11, 2020  02:18
 *   Description: Get min/max/avg sequence length in fasta.
+*                Optionally, report min/max/avg missing data.
+*                Mising data is any of the symbols 'Nn?-'.
 *                Can read compressed (gzip) files.
 *                Prints to both stdout and stderr.
-*       Compile: gcc -Wall -o get_fasta_info get_fasta_info.c -lm -lz
+*       Compile: gcc -Wall -O3 -o get_fasta_info get_fasta_info.c -lm -lz
 *           Run: get_fasta_info fasta.fas
 *       License: Copyright (c) 2019-2020 Johan Nylander
 *                Permission is hereby granted, free of charge, to any person
@@ -39,28 +41,34 @@
 
 int main (int argc, char **argv) {
 
+    long int nseqs;
+    long int seqlen;
     long int minlen;
     long int maxlen;
-    long int sum;
-    long int seqlen;
-    long int nseqs;
+    long int lensum;
+    long int ngaps;
+    long int gapsum;
+    long int mingaps;
+    long int maxgaps;
     float avelen = 0.0f;
+    float avegaps = 0.0f;
     char r; // r is the character currently read
     int inheader;
     int verbose = 1;
+    int countgaps = 0;
     char *fname;
     extern char *optarg;
     extern int optind;
     int c, err = 0;
 
-    static char usage[] = "\nGet basic summary info about fasta formatted files.\n\nUsage:\n\n %s [-h][-n] infile(s).\n\n  -h is help\n  -n is noverbose\n\n  infile should be in fasta format.\n\n";
+    static char usage[] = "\nGet basic summary info about fasta formatted files.\n\nUsage:\n\n %s [-h][-n][-g] infile(s).\n\n  -h is help\n  -n is noverbose\n  -g is count gaps\n\n  infile should be in fasta format.\n\n";
 
     if (argc == 1) {
         fprintf(stderr, usage, argv[0]);
         exit(EXIT_FAILURE);
     }
 
-    while ((c = getopt(argc, argv, "hn")) != -1) {
+    while ((c = getopt(argc, argv, "hng")) != -1) {
         switch (c) {
             case 'h':
                 fprintf(stderr, usage, argv[0]);
@@ -68,6 +76,9 @@ int main (int argc, char **argv) {
                 break;
             case 'n':
                 verbose = 0;
+                break;
+            case 'g':
+                countgaps = 1;
                 break;
             case '?':
                 err = 1;
@@ -97,7 +108,11 @@ int main (int argc, char **argv) {
             inheader = 0;
             nseqs = 0;
             seqlen = 0;
-            sum = 0;
+            lensum = 0;
+            mingaps = INT_MAX;
+            maxgaps = INT_MIN;
+            ngaps = 0;
+            gapsum = 0;
 
             while ((r = gzgetc(zfp)) != EOF) {
                 if (inheader == 1) {
@@ -115,18 +130,40 @@ int main (int argc, char **argv) {
                             if (seqlen < minlen) {
                                 minlen = seqlen;
                             }
-                            sum += seqlen;
+                            lensum += seqlen;
                         }
                         else {
                             minlen = 0;
                         }
                         seqlen = 0;
                     }
+                    if (countgaps == 1) {
+                        if (nseqs > 0) {
+                            if (ngaps > 0) {
+                                if (ngaps > maxgaps) {
+                                    maxgaps = ngaps;
+                                }
+                                if (ngaps < mingaps) {
+                                    mingaps = ngaps;
+                                }
+                                gapsum += ngaps;
+                            }
+                            else {
+                                mingaps = 0;
+                            }
+                            ngaps = 0;
+                        }
+                    }
                     ++nseqs;
                 }
                 else {
                     if (!isspace(r)) {
                         ++seqlen;
+                    }
+                    if (countgaps == 1) {
+                        if (r == '-' || r == 'n' || r == 'N' || r == '?') {
+                            ++ngaps;
+                        }
                     }
                 }
             }
@@ -138,30 +175,65 @@ int main (int argc, char **argv) {
             if (seqlen < minlen) {
                 minlen = seqlen;
             }
-            sum += seqlen;
+            lensum += seqlen;
+
+            if (ngaps > maxgaps) {
+                maxgaps = ngaps;
+            }
+            if (ngaps < mingaps) {
+                mingaps = ngaps;
+            }
+            gapsum += ngaps;
 
             // If all empty sequences
             if (minlen == INT_MAX && maxlen == INT_MIN) {
                 minlen = maxlen = 0;
             }
 
-            if (sum > 0) {
-                avelen = 1.0 * sum / nseqs;
+            if (lensum > 0) {
+                avelen = 1.0 * lensum / nseqs;
             }
             else {
                 avelen = 0.0;
             }
+            
+            if (countgaps == 1) {
+                if (gapsum > 0) {
+                    avegaps = 1.0 * gapsum / nseqs;
+                }
+                else {
+                    avegaps = 0.0;
+                }
+            }
 
             if (verbose) {
-                fprintf(stderr, "%s", "Nseqs\tMin.len\tMax.len\tAvg.len\tFile\n");
+                if (countgaps == 1) {
+                    fprintf(stderr, "%s", "Nseqs\tMin.len\tMax.len\tAvg.len\tMin.gaps\tMax.gaps\tAvg.gaps\tFile\n");
+                }
+                else {
+                    fprintf(stderr, "%s", "Nseqs\tMin.len\tMax.len\tAvg.len\tFile\n");
+                }
             }
-            fprintf(stdout, "%ld\t%ld\t%ld\t%g\t%s\n", nseqs, minlen, maxlen, round(avelen), basename(fname));
+
+            if (countgaps == 1) {
+                fprintf(stdout, "%ld\t%ld\t%ld\t%g\t%ld\t%ld\t%g\t%s\n", nseqs, minlen, maxlen, round(avelen), mingaps, maxgaps, round(avegaps), basename(fname));
+            }
+            else {
+                fprintf(stdout, "%ld\t%ld\t%ld\t%g\t%s\n", nseqs, minlen, maxlen, round(avelen), basename(fname));
+            }
 
             minlen = INT_MAX;
             maxlen = INT_MIN;
             nseqs = 0;
             seqlen = 0;
-            sum = 0;
+            lensum = 0;
+
+            if (countgaps == 1) {
+                mingaps = INT_MAX;
+                maxgaps = INT_MIN;
+                ngaps = 0;
+                gapsum = 0;
+            }
 
             gzclose(zfp);
 
