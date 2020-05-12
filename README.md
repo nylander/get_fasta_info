@@ -13,7 +13,9 @@ sequence lengths, for FASTA or FASTQ formatted files.
 Program written in C. Distributed under the MIT license. 
 
 Will report number of sequences, min/max/average sequence lengths, and file
-name read, as tab-delimited output. Prints to both STDOUT and STDERR. Can read
+name read, as tab-delimited output. In addition, if option `-g` is used,
+the program will also report min/max/average proportion of missing data
+(symbols `Nn?-`). Prints to both STDOUT and STDERR. Can read
 compressed (gzip) input files.
 
 Note: If empty sequences are present, their length (0) will still be used when
@@ -27,6 +29,7 @@ calculating the average sequence length in the file.
 #### Options:
 
 - `-h` print brief usage information
+- `-g` report missing data
 - `-n` do not print the output header
 
 #### Examples:
@@ -45,6 +48,10 @@ calculating the average sequence length in the file.
     3	1	3	2	fasta.fasta
     3	1	3	2	fasta.fasta.gz
 
+    $ src/get_fasta_info -g dat/gaps.fna
+    Nseqs	Min.len	Max.len	Avg.len	Min.gap	Max.gap	Avg.gap	File
+    3	10	10	10	0.00	1.00	0.47	gaps.fna
+
 
 ##### Which files are not aligned (all of the same length)?
 
@@ -60,6 +67,11 @@ calculating the average sequence length in the file.
 
     $ src/get_fasta_info -n dat/*.fas | \
         awk '!$2 {print $NF}'
+
+##### Which files have at least one sequence with all missing data
+
+    $ src/get_fasta_info -g -n dat/*.f?? | \
+        awk '$6 == 1.00 {print $NF}'
 
 
 ## `get_fastq_info`
