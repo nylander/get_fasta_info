@@ -1,7 +1,7 @@
 /*        
 *          File: get_fasta_info.c
 *            By: Johan Nylander
-* Last modified: tis maj 12, 2020  12:22
+* Last modified: fre aug 28, 2020  11:21
 *   Description: Get min/max/avg sequence length in fasta.
 *                Optionally, report min/max/avg missing data.
 *                Mising data is any of the symbols 'Nn?-' and
@@ -64,7 +64,7 @@ int main (int argc, char **argv) {
     extern int optind;
     int c, err = 0;
 
-    static char usage[] = "\nGet basic summary info about fasta formatted files.\n\nUsage:\n\n %s [-h][-n][-g] infile(s).\n\n  -h is help\n  -n is noverbose\n  -g is count gaps\n\n  infile should be in fasta format.\n\n";
+    static char usage[] = "\nGet basic summary info about fasta formatted files.\n\nUsage:\n\n %s [-h][-n][-g] infile(s).\n\n  -h is help\n  -n is noverbose\n  -g is count gaps (i.e. missing data symbols -Nn?)\n\n  infile should be in fasta format.\n\n";
 
     if (argc == 1) {
         fprintf(stderr, usage, argv[0]);
