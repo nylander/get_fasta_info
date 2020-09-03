@@ -21,10 +21,11 @@ compressed (gzip) input files.
 Note: If empty sequences are present, their length (0) will still be used when
 calculating the average sequence length in the file.
 
-#### To compile:
+#### To compile and install:
 
     cd src
     make
+    make install
 
 #### Options:
 
@@ -87,10 +88,11 @@ STDOUT and STDERR. Can read compressed (gzip) input files.
 Note: If empty sequences are present, their length (0) will still be used when
 calculating the average sequence length in the file.
 
-#### To compile:
+#### To compile and install
 
     cd src
     make
+    make install
 
 #### Options:
 
