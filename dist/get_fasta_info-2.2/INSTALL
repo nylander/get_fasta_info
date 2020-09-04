@@ -1,0 +1,8 @@
+INSTALL
+
+This will compile and install get_fasta_info in /usr/local/bin:
+
+    ./compile
+    make
+    sudo make install
+
