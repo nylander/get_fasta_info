@@ -1,4 +1,4 @@
-AC_INIT([get_fast_info], [2.2], [johan.nylander@nrm.se])
+AC_INIT([get_fast_info], [2.2.1], [johan.nylander@nrm.se])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 : ${CFLAGS=""}
 AC_PROG_CC
