@@ -4,7 +4,8 @@ Some useful summary tools for FASTA and FASTQ formatted files.
 
 These tools gives a brief summary of number of sequences, min, max, and average
 sequence lengths, for FASTA or FASTQ formatted files.
- 
+
+For installation, see file `INSTALL`.
 
 ## `get_fasta_info`
 
@@ -20,12 +21,6 @@ compressed (gzip) input files.
 
 Note: If empty sequences are present, their length (0) will still be used when
 calculating the average sequence length in the file.
-
-#### To compile and install:
-
-    cd src
-    make
-    make install
 
 #### Options:
 
@@ -52,7 +47,6 @@ calculating the average sequence length in the file.
     $ src/get_fasta_info -g dat/gaps.fna
     Nseqs	Min.len	Max.len	Avg.len	Min.gap	Max.gap	Avg.gap	File
     3	10	10	10	0.00	1.00	0.47	gaps.fna
-
 
 ##### Which files are not aligned (all of the same length)?
 
@@ -88,12 +82,6 @@ STDOUT and STDERR. Can read compressed (gzip) input files.
 Note: If empty sequences are present, their length (0) will still be used when
 calculating the average sequence length in the file.
 
-#### To compile and install
-
-    cd src
-    make
-    make install
-
 #### Options:
 
 - `-h` print brief usage information
@@ -117,7 +105,6 @@ calculating the average sequence length in the file.
     $ src/get_fastq_info -n -q dat/fastq.*
     4	150	150	150	36	fastq.fastq
     1000	78	150	150	35	fastq.fq.gz
-
 
 ## `get_fasta_info.pl`
 
@@ -154,7 +141,6 @@ can also read `bzip` format (if `bzip2` is installed) in addition to `.gz`,
 will acknowledge the original author (as soon as I locate him/her!). If you
 recognize the code, please send me a note!
 
-
 ## `get_fasta_details.pl`
 
 #### Description:
@@ -183,7 +169,6 @@ Can sort in ascending/descending order on sequence length.
     283	1	dat/2.fas	gi|949023402|gb|KRO32148.1| ...
     315	2	dat/2.fas	gi|949028303|gb|KRO35658.1| ...
     ...
-
 
 ## Tip on decompression
 
