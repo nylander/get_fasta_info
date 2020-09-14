@@ -1,8 +1,0 @@
-INSTALL
-
-This will compile and install get_fastq_info in /usr/local/bin:
-
-    ./compile
-    make
-    sudo make install
-

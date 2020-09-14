@@ -1,0 +1,19 @@
+# Install get_fasta_info and get_fastq_info
+
+A C-compiler and the make system is needed to build the
+programs from source. If required tools are in place, run:
+
+    ./configure
+    make
+
+And to install (standard location usually `/usr/local/bin/`):
+
+    sudo make install
+
+To install in, e.g., user's own `~/bin/` directory, use
+
+    ./configure --prefix ~ ; make ; make install
+
+See `./configure --help` for options.
+
+

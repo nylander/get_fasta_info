@@ -1,11 +1,10 @@
 TODO
 NOTES.md
 Old/
+Old.tgz
 benchmark/
+benchmark.tgz
 *.swp
 *.o
 src/get_fasta_info
 src/get_fastq_info
-src/NOTES.md
-src/quickselect.c
-src/wirth.c
