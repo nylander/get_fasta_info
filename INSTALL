@@ -23,3 +23,13 @@ To install in, e.g., user's own `~/bin/` directory, use
 See `./configure --help` for options.
 
 
+Troubleshooting:
+
+When cloning from github you may run in to this problem when running make:
+```
+get_fasta_info/missing: line 81: aclocal-1.16: command not found
+WARNING: 'aclocal-1.16' is missing on your system.
+```
+Try to run `touch aclocal.m4 configure config.h.in Makefile.* src/Makefile.*`
+*before* running `./configure`, and try again. Alt. re-clone, touch, and configure.
+
