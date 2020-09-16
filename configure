@@ -4283,7 +4283,9 @@ $as_echo "#define HAVE_LIBZ 1" >>confdefs.h
     #
     # If either header or library was not found, action-if-not-found
     #
-    as_fn_error $? "A working zlib is required" "$LINENO" 5
+
+                as_fn_error $? "either specify a valid zlib installation with --with-zlib=DIR or disable zlib usage with --without-zlib" "$LINENO" 5
+
   fi
 fi
 
