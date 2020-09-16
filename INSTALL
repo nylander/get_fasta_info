@@ -1,18 +1,24 @@
 # Install get_fasta_info and get_fastq_info
 
 A C-compiler and the make system is needed to build the
-programs from source. If required tools are in place, run:
+programs from source. Furthermore, the compression library zlib
+also needs to be installed. On a Debian/Ubuntu Linux system,
+this can be accomplished by
 
-    ./configure
-    make
+    $ sudo apt install build-essential zlib1g-dev
+
+If required tools are in place, run:
+
+    $ ./configure
+    $ make
 
 And to install (standard location usually `/usr/local/bin/`):
 
-    sudo make install
+    $ sudo make install
 
 To install in, e.g., user's own `~/bin/` directory, use
 
-    ./configure --prefix ~ ; make ; make install
+    $ ./configure --prefix ~ ; make ; make install
 
 See `./configure --help` for options.
 
