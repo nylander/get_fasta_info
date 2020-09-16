@@ -8,5 +8,5 @@ AC_CONFIG_FILES([
  src/Makefile
 ])
 AC_CHECK_HEADERS([limits.h stdlib.h unistd.h])
-AX_CHECK_ZLIB([], [])
+AX_CHECK_ZLIB
 AC_OUTPUT
