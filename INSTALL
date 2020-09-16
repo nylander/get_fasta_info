@@ -33,3 +33,5 @@ WARNING: 'aclocal-1.16' is missing on your system.
 Try to run `touch aclocal.m4 configure config.h.in Makefile.* src/Makefile.*`
 *before* running `./configure`, and try again. Alt. re-clone, touch, and configure.
 
+Alt. 2. Install `automake` (`sudo apt install automake`), re-clone and configure.
+
