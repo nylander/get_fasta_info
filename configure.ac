@@ -8,7 +8,7 @@ AC_CONFIG_FILES([
  src/Makefile
 ])
 AC_SEARCH_LIBS(m)
-AC_SEARCH_LIBS(deflate, z)
-AC_CHECK_HEADERS(zlib.h)
+AC_SEARCH_LIBS(deflate, z, [], [AC_ERROR([A working zlib is required])])
+AC_CHECK_HEADERS(zlib.h, [], [AC_ERROR([zlib dev is required])])
 AC_CHECK_HEADERS(limits.h stdlib.h unistd.h)
 AC_OUTPUT

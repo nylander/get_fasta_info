@@ -3847,6 +3847,8 @@ ac_res=$ac_cv_search_deflate
 if test "$ac_res" != no; then :
   test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
 
+else
+  as_fn_error $? "A working zlib is required" "$LINENO" 5
 fi
 
 ac_ext=c
@@ -4254,6 +4256,8 @@ if test "x$ac_cv_header_zlib_h" = xyes; then :
 #define HAVE_ZLIB_H 1
 _ACEOF
 
+else
+  as_fn_error $? "zlib dev is required" "$LINENO" 5
 fi
 
 done
