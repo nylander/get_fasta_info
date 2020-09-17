@@ -7,6 +7,8 @@ AC_CONFIG_FILES([
  Makefile
  src/Makefile
 ])
-AC_CHECK_HEADERS([limits.h stdlib.h unistd.h])
-AX_CHECK_ZLIB()
+AC_SEARCH_LIBS(m)
+AC_SEARCH_LIBS(deflate, z)
+AC_CHECK_HEADERS(zlib.h)
+AC_CHECK_HEADERS(limits.h stdlib.h unistd.h)
 AC_OUTPUT

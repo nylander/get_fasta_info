@@ -9,3 +9,4 @@ benchmark.tgz
 src/get_fasta_info
 src/get_fastq_info
 autom4te.cache/
+src/.deps/

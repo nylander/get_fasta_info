@@ -12,20 +12,20 @@ If required tools are in place, run:
     $ ./configure
     $ make
 
-And to install (standard location usually `/usr/local/bin/`):
+And to install (standard location usually `/usr/local/`):
 
     $ sudo make install
 
-To install in, e.g., user's own `~/bin/` directory, use
+To install in, e.g., user's own `$HOME` (binaries in `$HOME/bin`), use
 
-    $ ./configure --prefix ~ ; make ; make install
+    $ ./configure --prefix $HOME ; make ; make install
 
 See `./configure --help` for options.
 
 
 Troubleshooting:
 
-When cloning from github you may run in to this problem when running make:
+When cloning from Github you may run in to this problem when running make:
 ```
 get_fasta_info/missing: line 81: aclocal-1.16: command not found
 WARNING: 'aclocal-1.16' is missing on your system.
