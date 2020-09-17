@@ -69,10 +69,10 @@ am__make_running_with_option = \
   test $$has_opt = yes
 am__make_dryrun = (target_option=n; $(am__make_running_with_option))
 am__make_keepgoing = (target_option=k; $(am__make_running_with_option))
-pkgdatadir = $(datadir)/get_fast_info
-pkgincludedir = $(includedir)/get_fast_info
-pkglibdir = $(libdir)/get_fast_info
-pkglibexecdir = $(libexecdir)/get_fast_info
+pkgdatadir = $(datadir)/get_fasta_info
+pkgincludedir = $(includedir)/get_fasta_info
+pkglibdir = $(libdir)/get_fasta_info
+pkglibexecdir = $(libexecdir)/get_fasta_info
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
 install_sh_DATA = $(install_sh) -c -m 644
 install_sh_PROGRAM = $(install_sh) -c
@@ -211,9 +211,6 @@ CCDEPMODE = depmode=gcc3
 CFLAGS = 
 CPP = gcc -E
 CPPFLAGS = 
-CXX = g++
-CXXDEPMODE = depmode=gcc3
-CXXFLAGS = -g -O2
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
 DEPDIR = .deps
@@ -235,11 +232,11 @@ LTLIBOBJS =
 MAKEINFO = ${SHELL} /home/nylander/Documents/Projects/GIT/get_fasta_info/missing makeinfo
 MKDIR_P = /bin/mkdir -p
 OBJEXT = o
-PACKAGE = get_fast_info
+PACKAGE = get_fasta_info
 PACKAGE_BUGREPORT = johan.nylander@nrm.se
-PACKAGE_NAME = get_fast_info
-PACKAGE_STRING = get_fast_info 2.2.1
-PACKAGE_TARNAME = get_fast_info
+PACKAGE_NAME = get_fasta_info
+PACKAGE_STRING = get_fasta_info 2.2.1
+PACKAGE_TARNAME = get_fasta_info
 PACKAGE_URL = 
 PACKAGE_VERSION = 2.2.1
 PATH_SEPARATOR = :
@@ -252,7 +249,6 @@ abs_srcdir = /home/nylander/Documents/Projects/GIT/get_fasta_info
 abs_top_builddir = /home/nylander/Documents/Projects/GIT/get_fasta_info
 abs_top_srcdir = /home/nylander/Documents/Projects/GIT/get_fasta_info
 ac_ct_CC = gcc
-ac_ct_CXX = g++
 am__include = include
 am__leading_dot = .
 am__quote = 

@@ -3,7 +3,6 @@ AC_INIT([get_fasta_info], [2.2.1], [johan.nylander@nrm.se])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 : ${CFLAGS=""}
 AC_CONFIG_HEADERS([config.h])
-AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_AWK
 AC_PROG_INSTALL
