@@ -211,6 +211,9 @@ CCDEPMODE = depmode=gcc3
 CFLAGS = 
 CPP = gcc -E
 CPPFLAGS = 
+CXX = g++
+CXXDEPMODE = depmode=gcc3
+CXXFLAGS = -g -O2
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
 DEPDIR = .deps
@@ -227,7 +230,7 @@ INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LDFLAGS = 
 LIBOBJS = 
-LIBS = -lz 
+LIBS = -lz -lz -lm 
 LTLIBOBJS = 
 MAKEINFO = ${SHELL} /home/nylander/Documents/Projects/GIT/get_fasta_info/missing makeinfo
 MKDIR_P = /bin/mkdir -p
@@ -249,6 +252,7 @@ abs_srcdir = /home/nylander/Documents/Projects/GIT/get_fasta_info
 abs_top_builddir = /home/nylander/Documents/Projects/GIT/get_fasta_info
 abs_top_srcdir = /home/nylander/Documents/Projects/GIT/get_fasta_info
 ac_ct_CC = gcc
+ac_ct_CXX = g++
 am__include = include
 am__leading_dot = .
 am__quote = 

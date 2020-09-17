@@ -9,9 +9,16 @@ AC_PROG_AWK
 AC_PROG_INSTALL
 AC_PROG_CPP
 AC_PROG_MKDIR_P
-AC_CHECK_LIB([m], [roundf])
-AC_CHECK_LIB([z], [gzgetc], [AC_ERROR([zlib dev (e.g. zlib1g-dev) is required])])
+
+#AC_CHECK_LIB([m], [roundf])
+#AC_CHECK_LIB([z], [gzgetc], [AC_ERROR([zlib dev (e.g. zlib1g-dev) is required])])
 #AC_CHECK_HEADERS(zlib.h, [], [AC_ERROR([zlib dev is required])])
+
+AC_CHECK_LIB([m], [roundf], [], [AC_ERROR([math lib is required])])
+AC_CHECK_LIB([z], [gzopen], [], [AC_ERROR([zlib dev (e.g. zlib1g-dev) is required])])
+AC_CHECK_LIB([z], [gzgetc], [], [AC_ERROR([zlib dev (e.g. zlib1g-dev) is required])])
+
+
 AC_CHECK_HEADERS([limits.h stdlib.h unistd.h])
 AC_CONFIG_FILES([
  Makefile
