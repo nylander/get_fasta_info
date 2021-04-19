@@ -1,7 +1,7 @@
-/*        
+/*
 *          File: get_fasta_info.c
 *            By: Johan Nylander
-* Last modified: tor sep 17, 2020  11:33
+* Last modified: mån apr 19, 2021  10:43
 *   Description: Get min/max/avg sequence length in fasta.
 *                Optionally, report min/max/avg missing data.
 *                Mising data is any of the symbols 'Nn?-' and
@@ -11,7 +11,7 @@
 *                Prints to both stdout and stderr.
 *       Compile: gcc -Wall -O3 -funroll-loops -o get_fasta_info get_fasta_info.c -lm -lz
 *           Run: get_fasta_info fasta.fas
-*       License: Copyright (c) 2019-2020 Johan Nylander
+*       License: Copyright (c) 2019-2021 Johan Nylander
 *                Permission is hereby granted, free of charge, to any person
 *                obtaining a copy of this software and associated documentation
 *                files (the "Software"), to deal in the Software without
@@ -64,7 +64,7 @@ int main (int argc, char **argv) {
     extern int optind;
     int c, err = 0;
 
-    static char usage[] = "\nGet basic summary info about fasta formatted files.\n\nUsage:\n\n %s [-h][-n][-g] infile(s).\n\n  -h is help\n  -n is noverbose\n  -g is count gaps (i.e. missing data symbols -Nn?)\n\n  infile should be in fasta format.\n\n";
+    static char usage[] = "\nGet basic summary info about fasta formatted files.\n\nUsage:\n\n %s [-h][-n][-g] infile(s).\n\n  -h is help\n  -n is noverbose\n  -g is count gaps (i.e. missing data symbols XN?-)\n\n  infile should be in fasta format.\n\n";
 
     if (argc == 1) {
         fprintf(stderr, usage, argv[0]);
@@ -163,7 +163,7 @@ int main (int argc, char **argv) {
                         ++seqlen;
                     }
                     if (countgap == 1) {
-                        if (r == '-' || r == 'n' || r == 'N' || r == '?') {
+                        if (r == '-' || r == 'X' || r == 'N' || r == '?') {
                             ++ngap;
                         }
                     }
@@ -201,7 +201,7 @@ int main (int argc, char **argv) {
             else {
                 avelen = 0.0;
             }
-            
+
             if (countgap == 1) {
                 if (fgapsum > 0.0) {
                     avegap = fgapsum / nseqs;

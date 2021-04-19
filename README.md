@@ -16,7 +16,7 @@ Program written in C. Distributed under the MIT license.
 Will report number of sequences, min/max/average sequence lengths, and file
 name read, as tab-delimited output. In addition, if option `-g` is used,
 the program will also report min/max/average proportion of missing data
-(symbols `Nn?-`). Prints to both STDOUT and STDERR. Can read
+(symbols `NX?-`). Prints to both STDOUT and STDERR. Can read
 compressed (gzip) input files.
 
 Note: If empty sequences are present, their length (0) will still be used when
@@ -131,7 +131,7 @@ can also read `bzip` format (if `bzip2` is installed) in addition to `.gz`,
     $ scripts/get_fasta_info.pl -n dat/*.fas
     9	643	649	647	dat/1.fas
     14	216	339	290	dat/2.fas
-    
+
     $ scripts/get_fasta_info.pl dat/*.fas 2>/dev/null | \
         sort -k4 | awk '{print $NF,$1}'
     dat/2.fas 14
@@ -149,7 +149,7 @@ Perl-script to read FASTA-formatted file and report a tab-separated list of
 sequence length, sequence number (in file), file name, FASTA header.
 
 Distributed under the MIT license.
-                  
+
 Can sort in ascending/descending order on sequence length.
 
 #### Options:
