@@ -1,10 +1,10 @@
 /*
 *          File: get_fasta_info.c
 *            By: Johan Nylander
-* Last modified: mån apr 19, 2021  10:43
+* Last modified: mån apr 19, 2021  10:53
 *   Description: Get min/max/avg sequence length in fasta.
 *                Optionally, report min/max/avg missing data.
-*                Mising data is any of the symbols 'Nn?-' and
+*                Mising data is any of the symbols 'NX?-' and
 *                is reported as the fraction of missing data
 *                in the sequence.
 *                Can read compressed (gzip) files.
