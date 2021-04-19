@@ -1,14 +1,14 @@
-/*        
+/*
 *          File: get_fastq_info.c
 *            By: Johan Nylander
-* Last modified: tis mar 24, 2020  02:41
+* Last modified: mån apr 19, 2021  10:44
 *   Description: Get min/max/avg sequence length in fastq.
 *                Can read compressed (gzip) files.
 *                Prints to both stdout and stderr.
 *                Can report average read quality (phred, ASCII_BASE=33) score.
 *       Compile: gcc -Wall -03 -funroll-loops -o get_fastq_info get_fastq_info.c -lm -lz
 *           Run: get_fastq_info -q fastq.fq.gz
-*       License: Copyright (c) 2019-2020 Johan Nylander
+*       License: Copyright (c) 2019-2021 Johan Nylander
 *                Permission is hereby granted, free of charge, to any person
 *                obtaining a copy of this software and associated documentation
 *                files (the "Software"), to deal in the Software without
