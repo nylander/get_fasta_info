@@ -35,3 +35,4 @@ Try to run `touch aclocal.m4 configure config.h.in Makefile.* src/Makefile.*`
 
 Alt. 2. Install `automake` (`sudo apt install automake`), re-clone and configure.
 
+Alt. 3. If you have installed autoconf (`sudo apt install autoconf`), run `autoreconf -f -i`, then configure.
