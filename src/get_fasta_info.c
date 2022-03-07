@@ -1,7 +1,7 @@
 /*
 *          File: get_fasta_info.c
 *            By: Johan Nylander
-* Last modified: mån mar 07, 2022  12:45
+* Last modified: mån mar 07, 2022  02:23
 *   Description: Get min/max/avg sequence length in fasta.
 *                Optionally, report min/max/avg missing data.
 *                Mising data is any of the symbols 'NX?-' and
@@ -41,6 +41,8 @@
 #include <math.h>
 #include <zlib.h>
 
+#define VERSION_STR "2.3.1"
+
 int main (int argc, char **argv) {
 
     long int nseqs;
@@ -64,19 +66,24 @@ int main (int argc, char **argv) {
     extern int optind;
     int c, err = 0;
 
-    static char usage[] = "\nGet basic summary info about fasta formatted files.\n\nUsage:\n\n %s [-h][-n][-g] infile(s).\n\n  -h is help\n  -n is noverbose\n  -g is count gaps (i.e. missing data symbols XN?-)\n\n  infile should be in fasta format.\n\n";
+    static char usage[] = "\nGet basic summary info about fasta formatted files.\n\nUsage:\n\n %s [-h][-n][-g][-V] infile(s).\n\n  -h is help\n  -V is version\n  -n is noverbose\n  -g is count gaps (i.e. missing data symbols XN?-)\n\n  infile should be in fasta format.\n\n";
 
     if (argc == 1) {
         fprintf(stderr, usage, argv[0]);
         exit(EXIT_FAILURE);
     }
 
-    while ((c = getopt(argc, argv, "hng")) != -1) {
+    while ((c = getopt(argc, argv, "hVng")) != -1) {
         switch (c) {
             case 'h':
                 fprintf(stderr, usage, argv[0]);
                 exit(EXIT_SUCCESS);
                 break;
+            case 'V':
+                fprintf(stdout, "%s\n", VERSION_STR);
+                exit(EXIT_SUCCESS);
+                break;
+
             case 'n':
                 verbose = 0;
                 break;

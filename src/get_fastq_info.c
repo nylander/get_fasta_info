@@ -1,7 +1,7 @@
 /*
 *          File: get_fastq_info.c
 *            By: Johan Nylander
-* Last modified: mån mar 07, 2022  12:45
+* Last modified: mån mar 07, 2022  02:23
 *   Description: Get min/max/avg sequence length in fastq.
 *                Can read compressed (gzip) files.
 *                Prints to both stdout and stderr.
@@ -38,6 +38,8 @@
 #include <unistd.h>
 #include <zlib.h>
 
+#define VERSION_STR "2.3.1"
+
 int main (int argc, char **argv) {
 
     char *fname;
@@ -60,17 +62,21 @@ int main (int argc, char **argv) {
     long int seqlen;
     long int sum;
 
-    static char usage[] = "\nGet basic summary info about fastq formatted files.\n\nUsage:\n\n %s [-h][-n][-q] infile(s).\n\n  -h help\n  -n noverbose\n  -q show avg. read qual (ASCII_BASE=33)\n\n\n  infile should be in fastq format (gzipped or not).\n\n";
+    static char usage[] = "\nGet basic summary info about fastq formatted files.\n\nUsage:\n\n %s [-h][-n][-q][-V] infile(s).\n\n  -h help\n  -n noverbose\n  -V version\n  -q show avg. read qual (ASCII_BASE=33)\n\n\n  infile should be in fastq format (gzipped or not).\n\n";
 
     if (argc == 1) {
         fprintf(stderr, usage, argv[0]);
         exit(EXIT_FAILURE);
     }
 
-    while ((c = getopt(argc, argv, "hnq")) != -1) {
+    while ((c = getopt(argc, argv, "hVnq")) != -1) {
         switch (c) {
             case 'h':
                 fprintf(stderr, usage, argv[0]);
+                exit(EXIT_SUCCESS);
+                break;
+            case 'V':
+                fprintf(stdout, "%s\n", VERSION_STR);
                 exit(EXIT_SUCCESS);
                 break;
             case 'n':
