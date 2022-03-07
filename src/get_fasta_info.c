@@ -1,7 +1,7 @@
 /*
 *          File: get_fasta_info.c
 *            By: Johan Nylander
-* Last modified: mån mar 07, 2022  10:33
+* Last modified: mån mar 07, 2022  12:45
 *   Description: Get min/max/avg sequence length in fasta.
 *                Optionally, report min/max/avg missing data.
 *                Mising data is any of the symbols 'NX?-' and
@@ -75,7 +75,7 @@ int main (int argc, char **argv) {
         switch (c) {
             case 'h':
                 fprintf(stderr, usage, argv[0]);
-                exit(1);
+                exit(EXIT_SUCCESS);
                 break;
             case 'n':
                 verbose = 0;
@@ -91,7 +91,7 @@ int main (int argc, char **argv) {
 
     if (err) {
         fprintf(stderr, usage, argv[0]);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     if (optind < argc) {
