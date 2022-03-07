@@ -1,7 +1,7 @@
 /*
 *          File: get_fasta_info.c
 *            By: Johan Nylander
-* Last modified: mån apr 19, 2021  10:53
+* Last modified: mån mar 07, 2022  10:33
 *   Description: Get min/max/avg sequence length in fasta.
 *                Optionally, report min/max/avg missing data.
 *                Mising data is any of the symbols 'NX?-' and
@@ -11,7 +11,7 @@
 *                Prints to both stdout and stderr.
 *       Compile: gcc -Wall -O3 -funroll-loops -o get_fasta_info get_fasta_info.c -lm -lz
 *           Run: get_fasta_info fasta.fas
-*       License: Copyright (c) 2019-2021 Johan Nylander
+*       License: Copyright (c) 2019-2022 Johan Nylander
 *                Permission is hereby granted, free of charge, to any person
 *                obtaining a copy of this software and associated documentation
 *                files (the "Software"), to deal in the Software without
