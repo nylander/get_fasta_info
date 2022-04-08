@@ -1,12 +1,12 @@
 /*
 *          File: get_fastq_info.c
 *            By: Johan Nylander
-* Last modified: mån mar 07, 2022  02:23
+* Last modified: fre apr 08, 2022  03:04
 *   Description: Get min/max/avg sequence length in fastq.
 *                Can read compressed (gzip) files.
 *                Prints to both stdout and stderr.
 *                Can report average read quality (phred, ASCII_BASE=33) score.
-*       Compile: gcc -Wall -03 -funroll-loops -o get_fastq_info get_fastq_info.c -lm -lz
+*       Compile: gcc -Wall -O3 -funroll-loops -o get_fastq_info get_fastq_info.c -lm -lz
 *           Run: get_fastq_info -q fastq.fq.gz
 *       License: Copyright (c) 2019-2022 Johan Nylander
 *                Permission is hereby granted, free of charge, to any person
@@ -38,11 +38,13 @@
 #include <unistd.h>
 #include <zlib.h>
 
-#define VERSION_STR "2.3.1"
+#define VERSION_STR "2.3.2"
 
 int main (int argc, char **argv) {
 
     char *fname;
+    char *res;
+    char buf[PATH_MAX];
     char r; // r is the character currently read
     extern char *optarg;
     extern int optind;
@@ -50,6 +52,7 @@ int main (int argc, char **argv) {
     float avequal = 0.0f;
     int c;
     int err = 0;
+    int fullpath = 0;
     int linecounter;
     int q;
     int quality = 0;
@@ -69,7 +72,7 @@ int main (int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
 
-    while ((c = getopt(argc, argv, "hVnq")) != -1) {
+    while ((c = getopt(argc, argv, "hVpnq")) != -1) {
         switch (c) {
             case 'h':
                 fprintf(stderr, usage, argv[0]);
@@ -78,6 +81,9 @@ int main (int argc, char **argv) {
             case 'V':
                 fprintf(stdout, "%s\n", VERSION_STR);
                 exit(EXIT_SUCCESS);
+                break;
+            case 'p':
+                fullpath = 1;
                 break;
             case 'n':
                 verbose = 0;
@@ -170,10 +176,26 @@ int main (int argc, char **argv) {
             }
 
             if (quality == 1) {
-                fprintf(stdout, "%ld\t%ld\t%ld\t%g\t%g\t%s\n", nseqs, minlen, maxlen, round(avelen), round(avequal), basename(fname));
+                //fprintf(stdout, "%ld\t%ld\t%ld\t%g\t%g\t%s\n", nseqs, minlen, maxlen, round(avelen), round(avequal), basename(fname));
+                fprintf(stdout, "%ld\t%ld\t%ld\t%g\t%g\t", nseqs, minlen, maxlen, round(avelen), round(avequal));
             }
             else {
-                fprintf(stdout, "%ld\t%ld\t%ld\t%g\t%s\n", nseqs, minlen, maxlen, round(avelen), basename(fname));
+                //fprintf(stdout, "%ld\t%ld\t%ld\t%g\t%s\n", nseqs, minlen, maxlen, round(avelen), basename(fname));
+                fprintf(stdout, "%ld\t%ld\t%ld\t%g\t", nseqs, minlen, maxlen, round(avelen));
+            }
+
+            if (fullpath == 1) {
+                res = realpath(fname, buf);
+                if (res) {
+                    fprintf(stdout, "%s\n", buf);
+                }
+                else {
+                    fprintf(stdout, "Error: Failed getting realpath of infile %s.\n", fname);
+                    exit(EXIT_FAILURE);
+                }
+            }
+            else {
+                fprintf(stdout,"%s\n", basename(fname));
             }
 
             gzclose(zfp);

@@ -5,13 +5,13 @@ Some useful summary tools for FASTA and FASTQ formatted files.
 These tools gives a brief summary of number of sequences, min, max, and average
 sequence lengths, for FASTA or FASTQ formatted files.
 
-For installation, see file `INSTALL`.
+For installation, see file (`INSTALL`)[INSTALL].
 
 ## `get_fasta_info`
 
 #### Description:
 
-Program written in C. Distributed under the MIT license. 
+Program written in C. Distributed under the MIT license.
 
 Will report number of sequences, min/max/average sequence lengths, and file
 name read, as tab-delimited output. In addition, if option `-g` is used,
@@ -27,6 +27,7 @@ calculating the average sequence length in the file.
 - `-h` print brief usage information
 - `-g` report missing data
 - `-n` do not print the output header
+- `-p` print real path for input file
 
 #### Examples:
 
@@ -87,6 +88,7 @@ calculating the average sequence length in the file.
 - `-h` print brief usage information
 - `-n` do not print the output header
 - `-q` report average read quality
+- `-p` print real path for input file
 
 #### Examples:
 

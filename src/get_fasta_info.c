@@ -1,7 +1,7 @@
 /*
 *          File: get_fasta_info.c
 *            By: Johan Nylander
-* Last modified: mån mar 07, 2022  02:23
+* Last modified: fre apr 08, 2022  03:05
 *   Description: Get min/max/avg sequence length in fasta.
 *                Optionally, report min/max/avg missing data.
 *                Mising data is any of the symbols 'NX?-' and
@@ -33,47 +33,50 @@
 */
 
 #include <ctype.h>
+#include <libgen.h>
+#include <limits.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <limits.h>
-#include <libgen.h>
-#include <math.h>
 #include <zlib.h>
 
-#define VERSION_STR "2.3.1"
+#define VERSION_STR "2.3.2"
 
 int main (int argc, char **argv) {
 
-    long int nseqs;
-    long int seqlen;
-    long int minlen;
-    long int maxlen;
-    long int lensum;
-    long int ngap;
-    float fgapsum;
-    float mingap;
-    float maxgap;
-    float avelen = 0.0f;
-    float avegap = 0.0f;
-    float fgap = 0.0f;
-    char r; // r is the character currently read
-    int inheader;
-    int verbose = 1;
-    int countgap = 0;
     char *fname;
+    char *res;
+    char buf[PATH_MAX];
+    char r; // r is the character currently read
     extern char *optarg;
     extern int optind;
+    float avegap = 0.0f;
+    float avelen = 0.0f;
+    float fgap = 0.0f;
+    float fgapsum;
+    float maxgap;
+    float mingap;
     int c, err = 0;
+    int countgap = 0;
+    int fullpath = 0;
+    int inheader;
+    int verbose = 1;
+    long int lensum;
+    long int maxlen;
+    long int minlen;
+    long int ngap;
+    long int nseqs;
+    long int seqlen;
 
-    static char usage[] = "\nGet basic summary info about fasta formatted files.\n\nUsage:\n\n %s [-h][-n][-g][-V] infile(s).\n\n  -h is help\n  -V is version\n  -n is noverbose\n  -g is count gaps (i.e. missing data symbols XN?-)\n\n  infile should be in fasta format.\n\n";
+    static char usage[] = "\nGet basic summary info about fasta formatted files.\n\nUsage:\n\n %s [-h][-n][-g][-p][-V] infile(s).\n\n  -h is help\n  -V is version\n  -n is noverbose\n  -g is count gaps (i.e. missing data symbols XN?-)\n  -p is to give full path to file\n\n  infile should be in fasta format.\n\n";
 
     if (argc == 1) {
         fprintf(stderr, usage, argv[0]);
         exit(EXIT_FAILURE);
     }
 
-    while ((c = getopt(argc, argv, "hVng")) != -1) {
+    while ((c = getopt(argc, argv, "hVpng")) != -1) {
         switch (c) {
             case 'h':
                 fprintf(stderr, usage, argv[0]);
@@ -83,7 +86,9 @@ int main (int argc, char **argv) {
                 fprintf(stdout, "%s\n", VERSION_STR);
                 exit(EXIT_SUCCESS);
                 break;
-
+            case 'p':
+                fullpath = 1;
+                break;
             case 'n':
                 verbose = 0;
                 break;
@@ -228,10 +233,24 @@ int main (int argc, char **argv) {
             }
 
             if (countgap == 1) {
-                fprintf(stdout, "%ld\t%ld\t%ld\t%g\t%.2f\t%.2f\t%.2f\t%s\n", nseqs, minlen, maxlen, round(avelen), mingap, maxgap, avegap, basename(fname));
+                fprintf(stdout, "%ld\t%ld\t%ld\t%g\t%.2f\t%.2f\t%.2f\t", nseqs, minlen, maxlen, round(avelen), mingap, maxgap, avegap);
             }
             else {
-                fprintf(stdout, "%ld\t%ld\t%ld\t%g\t%s\n", nseqs, minlen, maxlen, round(avelen), basename(fname));
+                fprintf(stdout, "%ld\t%ld\t%ld\t%g\t", nseqs, minlen, maxlen, round(avelen));
+            }
+
+            if (fullpath == 1) {
+                res = realpath(fname, buf);
+                if (res) {
+                    fprintf(stdout, "%s\n", buf);
+                }
+                else {
+                    fprintf(stdout, "Error: Failed getting realpath of infile %s.\n", fname);
+                    exit(EXIT_FAILURE);
+                }
+            }
+            else {
+                fprintf(stdout,"%s\n", basename(fname));
             }
 
             minlen = INT_MAX;
