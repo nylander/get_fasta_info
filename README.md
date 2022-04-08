@@ -5,7 +5,7 @@ Some useful summary tools for FASTA and FASTQ formatted files.
 These tools gives a brief summary of number of sequences, min, max, and average
 sequence lengths, for FASTA or FASTQ formatted files.
 
-For installation, see file (`INSTALL`)[INSTALL].
+For installation, see file [`INSTALL`](INSTALL).
 
 ## `get_fasta_info`
 
