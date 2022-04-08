@@ -31,43 +31,52 @@ calculating the average sequence length in the file.
 
 #### Examples:
 
-    $ src/get_fasta_info dat/fasta.*
+    $ src/get_fasta_info data/fasta.*
     Nseqs	Min.len	Max.len	Avg.len	File
     3	1	3	2	fasta.fasta
     Nseqs	Min.len	Max.len	Avg.len	File
     3	1	3	2	fasta.fasta.gz
 
-    $ src/get_fasta_info -n dat/fasta.*
+    $ src/get_fasta_info -n data/fasta.*
     3	1	3	2	fasta.fasta
     3	1	3	2	fasta.fasta.gz
 
-    $ src/get_fasta_info dat/fasta.* 2>/dev/null
+    $ src/get_fasta_info -n -p data/fasta.*
+    3	1	3	2	/full/path/to/fasta.fasta
+    3	1	3	2	/full/path/to/fasta.fasta.gz
+
+    $ src/get_fasta_info data/fasta.* 2>/dev/null
     3	1	3	2	fasta.fasta
     3	1	3	2	fasta.fasta.gz
 
-    $ src/get_fasta_info -g dat/gaps.fna
+    $ src/get_fasta_info -g data/gaps.fna
     Nseqs	Min.len	Max.len	Avg.len	Min.gap	Max.gap	Avg.gap	File
     3	10	10	10	0.00	1.00	0.47	gaps.fna
 
 ##### Which files are not aligned (all of the same length)?
 
-    $ src/get_fasta_info -n dat/*.fas | \
+    $ src/get_fasta_info -n data/*.fas | \
         awk '$2 != $3 {print $NF}'
 
 ##### Which files have 9 sequences, and are aligned (all of the same length)?
 
-    $ src/get_fasta_info -n dat/*.fas | \
+    $ src/get_fasta_info -n data/*.fas | \
         awk '$1 == 9 && $2 == $3 {print $NF}'
 
 ##### Which files have zero-length sequences?
 
-    $ src/get_fasta_info -n dat/*.fas | \
+    $ src/get_fasta_info -n data/*.fas | \
         awk '!$2 {print $NF}'
 
 ##### Which files have at least one sequence with all missing data
 
-    $ src/get_fasta_info -g -n dat/*.f?? | \
+    $ src/get_fasta_info -g -n data/*.f?? | \
         awk '$6 == 1.00 {print $NF}'
+
+##### Remove the files found in the previous example (note the addition of `-p`)
+
+    $ rm -v $(src/get_fasta_info -g -n -p data/*.f?? | \
+        awk '$6 == 1.00 {print $NF}')
 
 
 ## `get_fastq_info`
@@ -92,19 +101,19 @@ calculating the average sequence length in the file.
 
 #### Examples:
 
-    $ src/get_fastq_info dat/fastq.*
+    $ src/get_fastq_info data/fastq.*
     Nseqs	Min.len	Max.len	Avg.len	File
     4	150	150	150	fastq.fastq
     Nseqs	Min.len	Max.len	Avg.len	File
     1000	78	150	150	fastq.fq.gz
 
-    $ src/get_fastq_info -q dat/fastq.*
+    $ src/get_fastq_info -q data/fastq.*
     Nseqs	Min.len	Max.len	Avg.len	Avg.qual	File
     4	150	150	150	36	fastq.fastq
     Nseqs	Min.len	Max.len	Avg.len	Avg.qual	File
     1000	78	150	150	35	fastq.fq.gz
 
-    $ src/get_fastq_info -n -q dat/fastq.*
+    $ src/get_fastq_info -n -q data/fastq.*
     4	150	150	150	36	fastq.fastq
     1000	78	150	150	35	fastq.fq.gz
 
@@ -124,17 +133,17 @@ can also read `bzip` format (if `bzip2` is installed) in addition to `.gz`,
 
 #### Examples:
 
-    $ scripts/get_fasta_info.pl dat/*.fas
+    $ scripts/get_fasta_info.pl data/*.fas
     Nseqs	Min.len	Max.len	Avg.len	File
     9	643	649	647	dat/1.fas
     Nseqs	Min.len	Max.len	Avg.len	File
     14	216	339	290	dat/2.fas
 
-    $ scripts/get_fasta_info.pl -n dat/*.fas
+    $ scripts/get_fasta_info.pl -n data/*.fas
     9	643	649	647	dat/1.fas
     14	216	339	290	dat/2.fas
 
-    $ scripts/get_fasta_info.pl dat/*.fas 2>/dev/null | \
+    $ scripts/get_fasta_info.pl data/*.fas 2>/dev/null | \
         sort -k4 | awk '{print $NF,$1}'
     dat/2.fas 14
     dat/1.fas 9
@@ -162,7 +171,7 @@ Can sort in ascending/descending order on sequence length.
 
 #### Examples:
 
-    $ scripts/get_fasta_details.pl dat/*.fas
+    $ scripts/get_fasta_details.pl data/*.fas
     649	0	dat/1.fas	gi|256009056|gb|ACU54623.1| ...
     643	1	dat/1.fas	gi|586972334|gb|EWT07678.1| ...
     645	2	dat/1.fas	gi|908398554|ref|WP_049755449.1| ...
