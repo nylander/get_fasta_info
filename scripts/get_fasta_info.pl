@@ -7,7 +7,7 @@
 
          FILE: get_fasta_info.pl
 
-        USAGE: ./get_fasta_info.pl [-n] [-h] infile(s) 
+        USAGE: ./get_fasta_info.pl [-n] [-h] infile(s)
 
   DESCRIPTION: Gives a brief summary of min, average, and
                max seq lengths for FASTA formatted sequence files.
@@ -46,7 +46,7 @@
          BUGS: ---
 
         NOTES: The script does not handle compressed tar archives.
-        
+
                The `get_fasta_info.pl` is based on modified code
                from the internet. I will acknowledge the original
                author (as soon as I locate him/her!).

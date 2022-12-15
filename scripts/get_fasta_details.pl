@@ -6,11 +6,11 @@
 
          FILE: get_fasta_details.pl
 
-        USAGE: ./get_fasta_details.pl [-s|-r] [-h] infile(s)  
+        USAGE: ./get_fasta_details.pl [-s|-r] [-h] infile(s)
 
   DESCRIPTION: Read FASTA-formatted file and report a tab-separated list of
                sequence length, sequence number (in file), file name, FASTA header
-               
+
                Can sort in ascending/descending order on sequence length
 
       OPTIONS: -s, --sort    Sort the output on sequence length, shortest first
@@ -20,7 +20,7 @@
  REQUIREMENTS: Uses perldoc for help documentation.
 
         NOTES: "sequence number (in file)" starts at 0.
-        
+
                The fasta parser doesn't explicitly handle duplicate headers!
 
        AUTHOR: Johan Nylander (JN), johan.nylander@nrm.se
@@ -33,8 +33,8 @@
 
      REVISION: 2019-08-14 11:15:57
 
-      LICENSE: Copyright (c) 2019-2020 Johan Nylander
-               
+      LICENSE: Copyright (c) 2019-2022 Johan Nylander
+
                Permission is hereby granted, free of charge, to any person
                obtaining a copy of this software and associated documentation
                files (the "Software"), to deal in the Software without
@@ -43,10 +43,10 @@
                sell copies of the Software, and to permit persons to whom the
                Software is furnished to do so, subject to the following
                conditions:
-               
+
                The above copyright notice and this permission notice shall be
                included in all copies or substantial portions of the Software.
-               
+
                THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
                EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
                OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
