@@ -2,9 +2,30 @@
 
 (Docs in progress)
 
+# Download distribution files and compile locally
+
+Download a release source code (zip or tar.gz from Assets, <https://github.com/nylander/get_fasta_info/releases>), and uncompress.
+From inside the decompressed folder, run:
+
+    $ ./configure
+    $ make
+    $ make install
+
+Last command may require admin permissions.
+
+If you have a $HOME/bin folder, you can use these commands
+
+    $ ./configure --prefix=$HOME
+    $ make
+    $ make install
+
+# Install from source
+
     $ sudo apt-get install autoconf automake gcc make zlib1g-dev
+
     $ git clone https://github.com/nylander/get_fasta_info.git
     $ cd get_fasta_info
+
     $ aclocal
     $ autoheader
     $ automake --add-missing
@@ -13,6 +34,7 @@
     $ make
     $ make install
 
+---
 
 (Old instructions below)
 
