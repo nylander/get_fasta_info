@@ -1,9 +1,5 @@
-TODO
-NOTES.md
-Old/
-Old.tgz
-benchmark/
-benchmark.tgz
+benchmark/*
+private/*
 *.swp
 *.o
 src/get_fasta_info
