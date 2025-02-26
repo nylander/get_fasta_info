@@ -1,5 +1,5 @@
 AC_PREREQ([2.69])
-AC_INIT([get_fasta_info], [2.3.1], [johan.nylander@nrm.se])
+AC_INIT([get_fasta_info], [2.4.1], [johan.nylander@nrm.se])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 : ${CFLAGS=""}
 AC_CONFIG_HEADERS([config.h])
