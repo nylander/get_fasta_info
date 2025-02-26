@@ -1,17 +1,17 @@
 /*
 *          File: get_fasta_info.c
 *            By: Johan Nylander
-* Last modified: fre apr 08, 2022  03:28
+* Last modified: ons feb 26, 2025  05:06
 *   Description: Get min/max/avg sequence length in fasta.
 *                Optionally, report min/max/avg missing data.
-*                Mising data is any of the symbols 'NX?-' and
-*                is reported as the fraction of missing data
-*                in the sequence.
+*                Mising data is any of the symbols 'Nn?Xx-' (can be
+*                changed by options) and is reported as the fraction
+*                of missing data in the sequence.
 *                Can read compressed (gzip) files.
 *                Prints to both stdout and stderr.
 *       Compile: gcc -Wall -O3 -funroll-loops -o get_fasta_info get_fasta_info.c -lm -lz
 *           Run: get_fasta_info fasta.fas
-*       License: Copyright (c) 2019-2022 Johan Nylander
+*       License: Copyright (c) 2019-2025 Johan Nylander
 *                Permission is hereby granted, free of charge, to any person
 *                obtaining a copy of this software and associated documentation
 *                files (the "Software"), to deal in the Software without
@@ -39,61 +39,196 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 #include <zlib.h>
 
-#define VERSION_STR "2.4.0"
+#define VERSION_STR "2.4.1"
+#define DEFAULT_MISSING_CHARS "Nn?Xx-"
 
-int main (int argc, char **argv) {
+void print_usage(char *prog_name) {
+    fprintf(stderr, "\n%s v%s\n", prog_name, VERSION_STR);
+    fprintf(stderr, "\nGet basic summary info about fasta formatted files.\n\n");
+    fprintf(stderr, "Usage:\n\n %s [options] infile(s).\n\n", prog_name);
+    fprintf(stderr, "Options:\n\n");
+    fprintf(stderr, " -h        help\n");
+    fprintf(stderr, " -V        version\n");
+    fprintf(stderr, " -n        noverbose\n");
+    fprintf(stderr, " -g        count gaps, i.e. missing data symbols. Default: %s\n", DEFAULT_MISSING_CHARS);
+    fprintf(stderr, " -C chars  use char(s) as missing symbols and use -g\n");
+    fprintf(stderr, " -N        -C N -g\n");
+    fprintf(stderr, " -X        -C X -g\n");
+    fprintf(stderr, " -Q        -C ? -g\n");
+    fprintf(stderr, " -G        -C - -g\n");
+    fprintf(stderr, " -p        print full path to file\n\n");
+    fprintf(stderr, " infile should be in fasta format.\n\n");
+}
 
-    char *fname;
-    char *res;
-    char buf[PATH_MAX];
-    char r; // r is the character currently read
-    extern char *optarg;
-    extern int optind;
-    float avegap = 0.0f;
-    float avelen = 0.0f;
-    float fgap = 0.0f;
-    float fgapsum;
-    float maxgap;
-    float mingap;
-    int c, err = 0;
-    int countgap = 0;
-    int fullpath = 0;
-    int inheader;
-    int verbose = 1;
-    long int lensum;
-    long int maxlen;
-    long int minlen;
-    long int ngap;
-    long int nseqs;
-    long int seqlen;
+void print_version() {
+    fprintf(stdout, "%s\n", VERSION_STR);
+}
 
-    static char usage[] = "\nGet basic summary info about fasta formatted files.\n\nUsage:\n\n %s [-h][-n][-g][-p][-V] infile(s).\n\n  -h is help\n  -V is version\n  -n is noverbose\n  -g is count gaps (i.e. missing data symbols XN?-)\n  -p is to give full path to file\n\n  infile should be in fasta format.\n\n";
-
-    if (argc == 1) {
-        fprintf(stderr, usage, argv[0]);
+void process_file(char *fname, int countgap, char *missing_chars, int fullpath, int verbose) {
+    gzFile zfp = gzopen(fname, "rb");
+    if (zfp == NULL) {
+        perror("Error: failed in opening file");
         exit(EXIT_FAILURE);
     }
 
-    while ((c = getopt(argc, argv, "hVpng")) != -1) {
+    char buf[PATH_MAX];
+    char r;
+    char *res;
+    int inheader = 0;
+    long int nseqs = 0, seqlen = 0;
+    long int lensum = 0, ngap = 0;
+    long int minlen = INT_MAX, maxlen = INT_MIN;
+    float mingap = 1.0f, maxgap = 0.0f, fgapsum = 0.0f;
+    float avegap = 0.0f, avelen = 0.0f;
+
+    while ((r = gzgetc(zfp)) != EOF) {
+        if (inheader) {
+            if (r == '\n') inheader = 0;
+        }
+        else if (r == '>') {
+            inheader = 1;
+            if (nseqs > 0) {
+                if (seqlen > 0) {
+                    if (seqlen > maxlen) {
+                        maxlen = seqlen;
+                    }
+                    if (seqlen < minlen) {
+                        minlen = seqlen;
+                    }
+                    lensum += seqlen;
+                }
+                else {
+                    minlen = 0;
+                }
+                if (countgap) {
+                    if (ngap > 0) {
+                        float fgap = (float) ngap / seqlen;
+                        if (fgap > maxgap) {
+                            maxgap = fgap;
+                        }
+                        if (fgap < mingap) {
+                            mingap = fgap;
+                        }
+                        fgapsum += fgap;
+                    }
+                    else {
+                        mingap = 0;
+                    }
+                    ngap = 0;
+                }
+                seqlen = 0;
+            }
+            ++nseqs;
+        }
+        else {
+            if (!isspace(r)) {
+                ++seqlen;
+            }
+            if (countgap && strchr(missing_chars, r)) {
+                ++ngap;
+            }
+        }
+    }
+
+    if (seqlen > maxlen) {
+        maxlen = seqlen;
+    }
+    if (seqlen < minlen) {
+        minlen = seqlen;
+    }
+    lensum += seqlen;
+
+    if (countgap) {
+        float fgap = (float) ngap / seqlen;
+        if (fgap > maxgap) {
+            maxgap = fgap;
+        }
+        if (fgap < mingap) {
+            mingap = fgap;
+        }
+        fgapsum += fgap;
+    }
+
+    if (minlen == INT_MAX && maxlen == INT_MIN) {
+        minlen = maxlen = 0;
+    }
+    avelen = lensum > 0 ? (float) lensum / nseqs : 0.0f;
+    if (countgap) {
+        avegap = fgapsum > 0.0 ? fgapsum / nseqs : 0.0;
+    }
+
+    if (verbose) {
+        fprintf(stderr, "%s", countgap ? "Nseqs\tMin.len\tMax.len\tAvg.len\tMin.gap\tMax.gap\tAvg.gap\tFile\n" : "Nseqs\tMin.len\tMax.len\tAvg.len\tFile\n");
+    }
+
+    if (countgap) {
+        fprintf(stdout, "%ld\t%ld\t%ld\t%ld\t%.2f\t%.2f\t%.2f\t", nseqs, minlen, maxlen, lround(avelen), mingap, maxgap, avegap);
+    }
+    else {
+        fprintf(stdout, "%ld\t%ld\t%ld\t%ld\t", nseqs, minlen, maxlen, lround(avelen));
+    }
+
+    if (fullpath) {
+        res = realpath(fname, buf);
+        if (res) {
+            fprintf(stdout, "%s\n", buf);
+        }
+        else {
+            fprintf(stdout, "Error: Failed getting realpath of infile %s.\n", fname);
+            exit(EXIT_FAILURE);
+        }
+    }
+    else {
+        fprintf(stdout, "%s\n", basename(fname));
+    }
+
+    gzclose(zfp);
+}
+
+int main(int argc, char **argv) {
+    int c, err = 0;
+    int countgap = 0, fullpath = 0, verbose = 1;
+    char *missing_chars = DEFAULT_MISSING_CHARS;
+
+    while ((c = getopt(argc, argv, "hVngNXQGC:p")) != -1) {
         switch (c) {
             case 'h':
-                fprintf(stderr, usage, argv[0]);
+                print_usage(argv[0]);
                 exit(EXIT_SUCCESS);
-                break;
             case 'V':
-                fprintf(stdout, "%s\n", VERSION_STR);
+                print_version();
                 exit(EXIT_SUCCESS);
-                break;
-            case 'p':
-                fullpath = 1;
-                break;
             case 'n':
                 verbose = 0;
                 break;
             case 'g':
                 countgap = 1;
+                break;
+            case 'N':
+                countgap = 1;
+                missing_chars = "N";
+                break;
+            case 'X':
+                countgap = 1;
+                missing_chars = "X";
+                break;
+            case 'Q':
+                countgap = 1;
+                missing_chars = "?";
+                break;
+            case 'G':
+                countgap = 1;
+                missing_chars = "-";
+                break;
+            case 'C':
+                countgap = 1;
+                missing_chars = optarg;
+                break;
+            case 'p':
+                fullpath = 1;
                 break;
             case '?':
                 err = 1;
@@ -102,180 +237,19 @@ int main (int argc, char **argv) {
     }
 
     if (err) {
-        fprintf(stderr, usage, argv[0]);
+        print_usage(argv[0]);
         exit(EXIT_FAILURE);
     }
 
-    if (optind < argc) {
-
-        for (; optind < argc; optind++) {
-
-            gzFile zfp = gzopen(argv[optind], "rb");
-
-            if (zfp == NULL) {
-                perror("Error: failed in opening file");
-                exit(EXIT_FAILURE);
-            }
-
-            fname = argv[optind];
-            minlen = INT_MAX;
-            maxlen = INT_MIN;
-            inheader = 0;
-            nseqs = 0;
-            seqlen = 0;
-            lensum = 0;
-            ngap = 0;
-            mingap = 1.0f;
-            maxgap = 0.0f;
-            fgapsum = 0.0f;
-
-            while ((r = gzgetc(zfp)) != EOF) {
-                if (inheader == 1) {
-                    if (r == '\n') {
-                        inheader = 0;
-                    }
-                }
-                else if (r == '>') {
-                    inheader = 1;
-                    if (nseqs > 0) {
-                        if (seqlen > 0) {
-                            if (seqlen > maxlen) {
-                                maxlen = seqlen;
-                            }
-                            if (seqlen < minlen) {
-                                minlen = seqlen;
-                            }
-                            lensum += seqlen;
-                        }
-                        else {
-                            minlen = 0;
-                        }
-                        if (countgap == 1) {
-                            if (ngap > 0) {
-                                fgap = ((float) ngap / (float) seqlen);
-                                if (fgap > maxgap) {
-                                    maxgap = fgap;
-                                }
-                                if (fgap < mingap) {
-                                    mingap = fgap;
-                                }
-                                fgapsum = fgapsum + fgap;
-                            }
-                            else {
-                                mingap = 0;
-                            }
-                            ngap = 0;
-                        }
-                        seqlen = 0;
-                    }
-                    ++nseqs;
-                }
-                else {
-                    if (!isspace(r)) {
-                        ++seqlen;
-                    }
-                    if (countgap == 1) {
-                        if (r == '-' || r == 'X' || r == 'N' || r == '?') {
-                            ++ngap;
-                        }
-                    }
-                }
-            }
-
-            // Take care of last seq
-            if (seqlen > maxlen) {
-                maxlen = seqlen;
-            }
-            if (seqlen < minlen) {
-                minlen = seqlen;
-            }
-            lensum += seqlen;
-
-            if (countgap == 1) {
-                fgap = ((float) ngap / (float) seqlen);
-                if (fgap > maxgap) {
-                    maxgap = fgap;
-                }
-                if (fgap < mingap) {
-                    mingap = fgap;
-                }
-                fgapsum = fgapsum + fgap;
-            }
-
-            // If all empty sequences
-            if (minlen == INT_MAX && maxlen == INT_MIN) {
-                minlen = maxlen = 0;
-            }
-
-            if (lensum > 0) {
-                avelen = 1.0 * lensum / nseqs;
-            }
-            else {
-                avelen = 0.0;
-            }
-
-            if (countgap == 1) {
-                if (fgapsum > 0.0) {
-                    avegap = fgapsum / nseqs;
-                }
-                else {
-                    avegap = 0.0;
-                }
-            }
-
-            if (verbose) {
-                if (countgap == 1) {
-                    fprintf(stderr, "%s", "Nseqs\tMin.len\tMax.len\tAvg.len\tMin.gap\tMax.gap\tAvg.gap\tFile\n");
-                }
-                else {
-                    fprintf(stderr, "%s", "Nseqs\tMin.len\tMax.len\tAvg.len\tFile\n");
-                }
-            }
-
-            if (countgap == 1) {
-                fprintf(stdout, "%ld\t%ld\t%ld\t%g\t%.2f\t%.2f\t%.2f\t", nseqs, minlen, maxlen, round(avelen), mingap, maxgap, avegap);
-            }
-            else {
-                fprintf(stdout, "%ld\t%ld\t%ld\t%g\t", nseqs, minlen, maxlen, round(avelen));
-            }
-
-            if (fullpath == 1) {
-                res = realpath(fname, buf);
-                if (res) {
-                    fprintf(stdout, "%s\n", buf);
-                }
-                else {
-                    fprintf(stdout, "Error: Failed getting realpath of infile %s.\n", fname);
-                    exit(EXIT_FAILURE);
-                }
-            }
-            else {
-                fprintf(stdout,"%s\n", basename(fname));
-            }
-
-            minlen = INT_MAX;
-            maxlen = INT_MIN;
-            nseqs = 0;
-            seqlen = 0;
-            lensum = 0;
-
-            if (countgap == 1) {
-                mingap = 1.0f;
-                maxgap = 0.0f;
-                ngap = 0;
-            }
-
-            gzclose(zfp);
-
-        }
-    }
-    else {
-        printf("Error: Need input fasta file(s) to process.\n");
-        fprintf(stderr, usage, argv[0]);
+    if (optind >= argc) {
+        fprintf(stderr, "Error: Need input fasta file(s) to process.\n");
+        print_usage(argv[0]);
         exit(EXIT_FAILURE);
+    }
+
+    for (; optind < argc; optind++) {
+        process_file(argv[optind], countgap, missing_chars, fullpath, verbose);
     }
 
     return EXIT_SUCCESS;
-
 }
-
