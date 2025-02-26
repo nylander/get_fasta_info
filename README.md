@@ -9,27 +9,33 @@ For installation, see file [`INSTALL`](INSTALL).
 
 ## `get_fasta_info`
 
-#### Description:
+#### Description
 
 Program written in C. Distributed under the MIT license.
 
 Will report number of sequences, min/max/average sequence lengths, and file
-name read, as tab-delimited output. In addition, if option `-g` is used,
-the program will also report min/max/average proportion of missing data
-(symbols `NX?-`). Prints to both STDOUT and STDERR. Can read
-compressed (gzip) input files.
+name read, as tab-delimited output. In addition, if option `-g` is used, the
+program will also report min/max/average proportion of missing data (symbols
+`Nn?Xx-`, can be changed with options). Prints to both STDOUT and STDERR. Can
+read compressed (gzip) input files.
 
 Note: If empty sequences are present, their length (0) will still be used when
 calculating the average sequence length in the file.
 
-#### Options:
+#### Options
 
-- `-h` print brief usage information
-- `-g` report missing data
-- `-n` do not print the output header
-- `-p` print real path for input file
+-  `-h` Help
+-  `-V` Version
+-  `-n` Noverbose
+-  `-g` Count gaps, i.e. missing data symbols. Default: `Nn?Xx-`
+-  `-C chars`  Use char(s) as missing symbols and use `-g`
+-  `-N` Use `-C N -g`
+-  `-X` Use `-C X -g`
+-  `-Q` Use `-C ? -g`
+-  `-G` Use `-C - -g`
+-  `-p` Print real path to input file
 
-#### Examples:
+#### Examples
 
     $ src/get_fasta_info data/fasta.*
     Nseqs	Min.len	Max.len	Avg.len	File
@@ -52,6 +58,14 @@ calculating the average sequence length in the file.
     $ src/get_fasta_info -g data/gaps.fna
     Nseqs	Min.len	Max.len	Avg.len	Min.gap	Max.gap	Avg.gap	File
     3	10	10	10	0.00	1.00	0.47	gaps.fna
+
+    $ src/get_fasta_info -G data/gaps.fna
+    Nseqs	Min.len	Max.len	Avg.len	Min.gap	Max.gap	Avg.gap	File
+    3	10	10	10	0.00	1.00	0.37	gaps.fna
+
+    $ src/get_fasta_info -C n? data/gaps.fna
+    Nseqs	Min.len	Max.len	Avg.len	Min.gap	Max.gap	Avg.gap	File
+    3	10	10	10	0.00	0.20	0.07	gaps.fna
 
 ##### Which files are not aligned (all of the same length)?
 
@@ -81,7 +95,7 @@ calculating the average sequence length in the file.
 
 ## `get_fastq_info`
 
-#### Description:
+#### Description
 
 Program written in C. Distributed under the MIT license.
 
@@ -92,14 +106,14 @@ STDOUT and STDERR. Can read compressed (gzip) input files.
 Note: If empty sequences are present, their length (0) will still be used when
 calculating the average sequence length in the file.
 
-#### Options:
+#### Options
 
 - `-h` print brief usage information
 - `-n` do not print the output header
 - `-q` report average read quality
 - `-p` print real path for input file
 
-#### Examples:
+#### Examples
 
     $ src/get_fastq_info data/fastq.*
     Nseqs	Min.len	Max.len	Avg.len	File
@@ -119,19 +133,19 @@ calculating the average sequence length in the file.
 
 ## `get_fasta_info.pl`
 
-#### Description:
+#### Description
 
 Perl-script with the same basic functionality as the (faster) C-program, but
 can also read `bzip` format (if `bzip2` is installed) in addition to `.gz`,
 `.zip`, and `.Z`. It does not, however, handle compressed tar archives
 (`.tar.gz`, etc).
 
-#### Options:
+#### Options
 
 - `-h` print brief Usage information
 - `-n` do not print the output header
 
-#### Examples:
+#### Examples
 
     $ scripts/get_fasta_info.pl data/*.fas
     Nseqs	Min.len	Max.len	Avg.len	File
@@ -154,7 +168,7 @@ recognize the code, please send me a note!
 
 ## `get_fasta_details.pl`
 
-#### Description:
+#### Description
 
 Perl-script to read FASTA-formatted file and report a tab-separated list of
 sequence length, sequence number (in file), file name, FASTA header.
@@ -163,13 +177,13 @@ Distributed under the MIT license.
 
 Can sort in ascending/descending order on sequence length.
 
-#### Options:
+#### Options
 
 - `-s`, `--sort`    Sort the output on sequence length, shortest first
 - `-r`, `--revsort` Sort the output on sequence length, longest first
 - `-h`, `--help`    Display help text
 
-#### Examples:
+#### Examples
 
     $ scripts/get_fasta_details.pl data/*.fas
     649	0	dat/1.fas	gi|256009056|gb|ACU54623.1| ...
