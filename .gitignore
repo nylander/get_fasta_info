@@ -1,15 +1,10 @@
 benchmark/*
 private/*
 
-src/get_fasta_info
-src/get_fastq_info
-src/.deps/
-
 # Ignore build artifacts
 *.o
 *.a
 *.so
-dfa
 
 # Ignore editor and IDE configurations
 *~
