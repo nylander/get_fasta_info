@@ -1,5 +1,21 @@
 # Install get_fasta_info and get_fastq_info
 
+(Docs in progress)
+
+    $ sudo apt-get install autoconf automake gcc make zlib1g-dev
+    $ git clone https://github.com/nylander/get_fasta_info.git
+    $ cd get_fasta_info
+    $ aclocal
+    $ autoheader
+    $ automake --add-missing
+    $ autoconf
+    $ ./configure --prefix=$HOME
+    $ make
+    $ make install
+
+
+(Old instructions below)
+
 A C-compiler and the make system is needed to build the
 programs from source. Furthermore, the compression library zlib
 also needs to be installed. On a Debian/Ubuntu Linux system,
