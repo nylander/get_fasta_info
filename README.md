@@ -92,7 +92,6 @@ calculating the average sequence length in the file.
     $ rm -v $(src/get_fasta_info -g -n -p data/*.f?? | \
         awk '$6 == 1.00 {print $NF}')
 
-
 ## `get_fastq_info`
 
 #### Description
