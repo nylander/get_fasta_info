@@ -26,12 +26,8 @@ If you have a $HOME/bin folder, you can use these commands
     $ git clone https://github.com/nylander/get_fasta_info.git
     $ cd get_fasta_info
 
-    $ aclocal
-    $ autoheader
-    $ automake --add-missing
-    $ autoconf
-    $ ./configure --prefix=$HOME
-    $ make
+    $ autoreconf -i
+    $ ./configure
     $ make install
 
 ---
