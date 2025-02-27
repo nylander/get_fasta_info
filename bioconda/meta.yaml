@@ -1,21 +1,23 @@
-{% set version = "2.4.1" %}
-{% set sha256 = "4591c360c5b1f090fee18a03da501790341f873dcdc41b10036594edb52bba54" %}
+{% set version = "2.5.0" %}
+{% set sha256 = "" %}
 
 package:
   name: get_fasta_info
   version: '{{ version }}'
 
 source:
-  url: https://github.com/nylander/get_fasta_info/archive/refs/tags/v.{{ version }}.tar.gz
+  url: https://github.com/nylander/get_fasta_info/archive/refs/tags/v{{ version }}.tar.gz
   sha256: '{{ sha256 }}'
 
 build:
   number: 0
+  run_exports:
+    - {{ pin_subpackage('get_fasta_info', max_pin="x") }}
 
 requirements:
   build:
-    - make
     - {{ compiler('c') }}
+    - make
     - autoconf
     - automake
   host:

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(get_fasta_info VERSION 2.4.1)
+project(get_fasta_info VERSION 2.5.0)
 set(CMAKE_C_STANDARD 99)
 find_package(ZLIB REQUIRED)
 add_executable(get_fasta_info src/get_fasta_info.c)
