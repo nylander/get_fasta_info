@@ -1,72 +1,65 @@
-# Install get_fasta_info and get_fastq_info
+# Installation instructions for Get FAST{A,Q} Info
 
-(Docs in progress)
+## Install from bioconda
 
-# Download distribution files and compile locally
+### Prerequisites:
 
-Download a release source code (zip or tar.gz from Assets, <https://github.com/nylander/get_fasta_info/releases>), and uncompress.
+Requires a local [conda (mamba) installation](https://github.com/conda-forge/miniforge).
+
+### Install
+
+    $ mamba install -c bioconda get_fasta_info
+    # Or to create a new environment
+    $ mamba create -c bioconda --name myenvname get_fasta_info
+
+## Building from Source
+
+### Prerequisites:
+
+GCC, Make, zlib library (development files).  Depending on how you choose to
+install (see examples below), you may also need CMake Autoconf and Automake.
+
+On a Debian based system, they can be installed by
+
+    $ sudo apt install gcc make cmake autoconf automake zlib1g-dev
+
+### Build using CMake:
+
+   $ git clone https://github.com/nylander/get_fasta_info.git
+   $ cd get_fasta_info
+   $ mkdir build
+   $ cd build
+   $ cmake ..
+   $ make
+
+   $ sudo make install
+   # Alt.
+   $ cmake --install . --prefix $HOME
+
+### Build using Autoconf and Automake:
+
+   $ git clone https://github.com/nylander/get_fasta_info.git
+   $ cd get_fasta_info
+   $ ./autogen.sh
+   $ ./configure
+   $ make
+
+   $ sudo make install
+   # Alt.
+   $ ./configure --prefix=$HOME
+   $ make
+   $ make install
+
+### Download distribution files and compile locally
+
+Download a release source code (zip or tar.gz from Assets,
+<https://github.com/nylander/get_fasta_info/releases>), and uncompress.
 From inside the decompressed folder, run:
 
     $ ./configure
     $ make
-    $ make install
-
-Last command may require admin permissions.
-
-If you have a $HOME/bin folder, you can use these commands
-
+    $ sudo make install
+    # Alt.
     $ ./configure --prefix=$HOME
     $ make
     $ make install
-
-# Install from source
-
-    $ sudo apt-get install autoconf automake gcc make zlib1g-dev
-
-    $ git clone https://github.com/nylander/get_fasta_info.git
-    $ cd get_fasta_info
-
-    $ autoreconf -i
-    $ ./configure
-    $ make install
-
----
-
-(Old instructions below)
-
-A C-compiler and the make system is needed to build the
-programs from source. Furthermore, the compression library zlib
-also needs to be installed. On a Debian/Ubuntu Linux system,
-this can be accomplished by
-
-    $ sudo apt install build-essential zlib1g-dev
-
-If required tools are in place, run:
-
-    $ ./configure
-    $ make
-
-And to install (standard location usually `/usr/local/`):
-
-    $ sudo make install
-
-To install in, e.g., user's own `$HOME` (binaries in `$HOME/bin`), use
-
-    $ ./configure --prefix $HOME ; make ; make install
-
-See `./configure --help` for options.
-
-
-Troubleshooting:
-
-When cloning from Github you may run in to this problem when running make:
-```
-get_fasta_info/missing: line 81: aclocal-1.16: command not found
-WARNING: 'aclocal-1.16' is missing on your system.
-```
-Try to run `touch aclocal.m4 configure config.h.in Makefile.* src/Makefile.*`
-*before* running `./configure`, and try again. Alt. re-clone, touch, and configure.
-
-Alt. 2. Install `automake` (`sudo apt install automake`), re-clone and configure.
-
-Alt. 3. If you have installed autoconf (`sudo apt install autoconf`), run `autoreconf -f -i`, then configure.
