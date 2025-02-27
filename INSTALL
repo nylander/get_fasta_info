@@ -2,7 +2,7 @@
 
 ## Install from bioconda
 
-### Prerequisites:
+### Prerequisites
 
 Requires a local [conda (mamba) installation](https://github.com/conda-forge/miniforge).
 
@@ -14,7 +14,7 @@ Requires a local [conda (mamba) installation](https://github.com/conda-forge/min
 
 ## Building from Source
 
-### Prerequisites:
+### Prerequisites
 
 GCC, Make, zlib library (development files).  Depending on how you choose to
 install (see examples below), you may also need CMake Autoconf and Automake.
@@ -23,7 +23,7 @@ On a Debian based system, they can be installed by
 
     $ sudo apt install gcc make cmake autoconf automake zlib1g-dev
 
-### Build using CMake:
+### Build using CMake
 
    $ git clone https://github.com/nylander/get_fasta_info.git
    $ cd get_fasta_info
@@ -36,7 +36,7 @@ On a Debian based system, they can be installed by
    # Alt.
    $ cmake --install . --prefix $HOME
 
-### Build using Autoconf and Automake:
+### Build using Autoconf and Automake
 
    $ git clone https://github.com/nylander/get_fasta_info.git
    $ cd get_fasta_info
