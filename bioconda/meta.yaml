@@ -1,5 +1,5 @@
-{% set version = "2.4" %}
-{% set sha256 = "ebe27e3481597cac86468fdf0917a605c4672183ab65a9dc7a34d309b33d0457" %}
+{% set version = "2.4.1" %}
+{% set sha256 = "" %}
 
 package:
   name: get_fasta_info
