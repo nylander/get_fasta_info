@@ -98,9 +98,11 @@ while (my $fastafile = shift(@ARGV)) {
 
     my $FASTA;
 
-    if ($fastafile =~ /\.gz$/) {
-        $FASTA = IO::Uncompress::Gunzip->new($fastafile)
-          or die "Cannot open gz file '$fastafile': $GunzipError\n";
+    if ($fastafile =~ /\.(?:gz|bgz|bgzf)$/i) {
+        $FASTA = IO::Uncompress::Gunzip->new(
+            $fastafile,
+            MultiStream => 1,
+        ) or die "Cannot open compressed file '$fastafile': $GunzipError\n";
     }
     else {
         open $FASTA, '<', $fastafile
