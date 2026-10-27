@@ -7,7 +7,7 @@
 
          FILE: get_fasta_info.pl
 
-        USAGE: ./get_fasta_info.pl [-n] [-h] infile(s)
+        USAGE: ./get_fasta_info.pl [-n] [-h] [-v] infile(s)
 
   DESCRIPTION: Gives a brief summary of min, average, and
                max seq lengths for FASTA formatted sequence files.
@@ -37,6 +37,7 @@
                  1.fas 9
 
       OPTIONS: -h,--help        Show help text
+               -v,--version     Print the version
                -n, --noverbose  Do not print the header
                                 (Nseqs Min.len Max.len Avg.len File)
 
@@ -54,13 +55,13 @@
 
        AUTHOR: Johan Nylander (JN), johan.nylander@nrm.se
 
-      COMPANY: NBIS/NRM
+      COMPANY: NRM
 
-      VERSION: 2.0
+      VERSION: 2.1
 
-      CREATED: < 2009 
+      CREATED: < 2009
 
-     REVISION: Fri 10 jan 2020 15:16:55
+     REVISION: 2026-10-27
 
 =cut
 
@@ -69,28 +70,31 @@
 use strict;
 use warnings;
 use Getopt::Long;
+use Pod::Usage qw(pod2usage);
 
-
-## main
+my $version = "2.1";
 my $VERBOSE = 1;
 
 GetOptions(
     "verbose!" => \$VERBOSE,
-    "help"     => sub {exec("perldoc", $0); exit(0);},
+    'version'  => sub {print $version, "\n";  exit(0);},
+    "help"     => sub {pod2usage(
+                           -verbose   => 2,
+                           -noperldoc => 1,
+                           -exitval   => 0,
+                           -output    => \*STDOUT,
+                       );
+                      },
 );
 
-while (my $infile = shift(@ARGV)) {
+while ( my $infile = shift(@ARGV) ) {
     read_file($infile);
 }
-
 exit(0);
 
-
-## Functions
 sub read_file {
 
     my ($file_name) = @_;
-
     my $header   = q{};
     my $contig   = q{};
     my $sequence = q{};
@@ -115,85 +119,65 @@ sub read_file {
         $file_name =~ s/(.*\.bz2)\s*$/bzip2 -dc < $1|/;
     }
 
-    open (FASTAIN, $file_name) or die "Can't open $file_name : $!";
-
+    open(FASTAIN, $file_name) or die "Can't open $file_name : $!";
     while (defined($line = <FASTAIN>)) {
         chomp $line;
         $line_num++;
         if ($line =~ /^\s*>/) {
             if ($contig) {
-                ($contigs, $bases, $min, $max) = process_contig($contig, $sequence, $contigs, $bases, $min, $max);
+                ($contigs, $bases, $min, $max) =
+                  process_contig( $contig, $sequence, $contigs, $bases, $min,
+                    $max );
             }
             $header = $line;
             if ($header =~ m/^\s*>\s*(\S+.*)$/) {
                 $contig = $1;
             }
             else {
-                die "Error: Could not read fasta file header at line $line_num\n"
+                die
+                  "Error: Could not read fasta file header at line $line_num\n"
                   . "in file: '$file_name'\n";
             }
             $sequence = '';
             next;
         }
-
         if (!$contig) {
             die "Error: Does '$file_name' begin with a fasta header?\n";
         }
-
         $line =~ s/\s//g;
         $sequence .= $line;
     }
-
     close(FASTAIN);
 
     if ($contig) {
-        ($contigs, $bases, $min, $max) = process_contig($contig, $sequence, $contigs, $bases, $min, $max);
+        ($contigs, $bases, $min, $max) =
+          process_contig($contig, $sequence, $contigs, $bases, $min, $max);
     }
-
-    $ave = $contigs ? (sprintf "%.0f", $bases/$contigs) : 0;
-
+    $ave = $contigs ? (sprintf "%.0f", $bases / $contigs) : 0;
     print_counts($contigs, $bases, $min, $max, $ave, $file_name);
-
     return;
-
 }
 
-
 sub process_contig {
-
     my ($contig, $sequence, $contigs, $bases, $min, $max) = @_;
-
     my $len = length $sequence;
-
     $contigs++;
     $bases += $len;
-
     if ((!defined $min) || ($min > $len)) {
         $min = $len;
     }
-
     if ($max < $len) {
         $max = $len;
     }
-
     return ($contigs, $bases, $min, $max);
-
 }
 
-
 sub print_counts {
-
     my ($contigs, $bases, $min, $max, $ave, $file_name) = @_;
-
     if ($VERBOSE) {
         print STDERR "Nseqs\tMin.len\tMax.len\tAvg.len\tFile\n";
     }
-
-    printf STDOUT "%d\t%d\t%d\t%d\t%s\n", $contigs, $min, $max, $ave, $file_name;
-
+    printf STDOUT "%d\t%d\t%d\t%d\t%s\n", $contigs, $min, $max, $ave,
+      $file_name;
     return;
-
 }
-
-
-__END__

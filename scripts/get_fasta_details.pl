@@ -1,12 +1,13 @@
 #!/usr/bin/env perl
 #===============================================================================
+
 =pod
 
 =head2
 
          FILE: get_fasta_details.pl
 
-        USAGE: ./get_fasta_details.pl [-s|-r] [-h] infile(s)
+        USAGE: ./get_fasta_details.pl [-s|-r] [-h,-v] infile(s)
 
   DESCRIPTION: Read FASTA-formatted file and report a tab-separated list of
                sequence length, sequence number (in file), file name, FASTA header
@@ -16,17 +17,17 @@
 
       OPTIONS: -s, --sort    Sort the output on sequence length, shortest first
                -r, --revsort Sort the output on sequence length, longest first
+               -v, --version Print version
                -h, --help    Display help text
 
- REQUIREMENTS: Uses perldoc for help documentation.
+ REQUIREMENTS: Uses core perl modules.
 
         NOTES: "sequence number (in file)" starts at 0.
-
                The fasta parser doesn't explicitly handle duplicate headers!
 
        AUTHOR: Johan Nylander (JN), johan.nylander@nrm.se
 
-      COMPANY: NBIS/NRM
+      COMPANY: NRM
 
       VERSION: 2.1
 
@@ -59,79 +60,90 @@
 
 =cut
 
-
 #===============================================================================
 
 use strict;
 use warnings;
 use Getopt::Long;
+use Pod::Usage             qw(pod2usage);
+use IO::Uncompress::Gunzip qw(gunzip $GunzipError);
 
+my $version = "2.1";
 my $sort    = 0;
 my $revsort = 0;
-my $term    = $/;
 
 GetOptions(
     'sort'    => \$sort,
     'revsort' => \$revsort,
-    'help'    => sub { exec("perldoc", $0); exit(0); },
+    'version' => sub { print $version, "\n"; exit(0); },
+    "help"    => sub {
+        pod2usage(
+            -verbose   => 2,
+            -noperldoc => 1,
+            -exitval   => 0,
+            -output    => \*STDOUT,
+        );
+    },
 );
 
 die "Try $0 --help for more info.\n" unless @ARGV;
 
-while ( my $fastafile = shift(@ARGV) ) {
+while (my $fastafile = shift(@ARGV)) {
 
-    my %seq_hash        = ();
     my %seq_length_hash = ();
     my %seq_nr_hash     = ();
 
     my $pos = 0;
     my $id;
-    my @sequencelines;
-    my $sequence;
-    my $line;
 
     my $FASTA;
 
     if ($fastafile =~ /\.gz$/) {
-        open $FASTA, "gunzip -c $fastafile |" or die("Open failed: $!");
+        $FASTA = IO::Uncompress::Gunzip->new($fastafile)
+          or die "Cannot open gz file '$fastafile': $GunzipError\n";
     }
     else {
-        open $FASTA, "<", $fastafile or die("Open failed: $!");
+        open $FASTA, '<', $fastafile
+          or die "Cannot open file '$fastafile': $!\n";
     }
 
-    $/ = ">";
+    while (my $line = <$FASTA>) {
+        chomp $line;
+        $line =~ s/\r\z//; # handle CRLF input
 
-    while (<$FASTA>) {
-        chomp;
-        next if ($_ eq '');
-        ($id, @sequencelines) = split /\n/;
-        $seq_nr_hash{$id} = $pos;
-        $sequence = '';
-        foreach $line (@sequencelines) {
-            $sequence .= $line;
+        if ($line =~ /^>(.*)\z/) {
+            $id                   = $1;
+            $seq_nr_hash{$id}     = $pos++;
+            $seq_length_hash{$id} = 0;
         }
-        $seq_length_hash{$id} = length($sequence);
-        $seq_hash{$id} = $sequence;
-        $pos++;
+        elsif (defined $id) {
+            $seq_length_hash{$id} += length($line);
+        }
     }
 
     close($FASTA);
 
-    $/ = $term;
-
     my @keys = ();
+
     if ($sort) {
-        @keys = sort { length( $seq_hash{$a} ) <=> length( $seq_hash{$b} ) }
-          keys %seq_hash;
+        @keys = sort {
+                 $seq_length_hash{$a} <=> $seq_length_hash{$b}
+              || $seq_nr_hash{$a} <=> $seq_nr_hash{$b}
+        } keys %seq_length_hash;
     }
     elsif ($revsort) {
-        @keys = sort { length( $seq_hash{$b} ) <=> length( $seq_hash{$a} ) }
-          keys %seq_hash;
+        @keys = sort {
+                 $seq_length_hash{$b} <=> $seq_length_hash{$a}
+              || $seq_nr_hash{$a} <=> $seq_nr_hash{$b}
+        } keys %seq_length_hash;
     }
     else {
-        @keys = sort { $seq_nr_hash{$a} <=> $seq_nr_hash{$b} } keys %seq_hash;
+        @keys = sort { $seq_nr_hash{$a} <=> $seq_nr_hash{$b} }
+          keys %seq_length_hash;
     }
+
     foreach my $key (@keys) {
-        print STDOUT "$seq_length_hash{$key}\t$seq_nr_hash{$key}\t$fastafile\t$key\t\n";
+        print STDOUT
+          "$seq_length_hash{$key}\t$seq_nr_hash{$key}\t$fastafile\t$key\t\n";
     }
 }
