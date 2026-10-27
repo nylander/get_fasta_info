@@ -11,7 +11,8 @@
   DESCRIPTION: Read FASTA-formatted file and report a tab-separated list of
                sequence length, sequence number (in file), file name, FASTA header
 
-               Can sort in ascending/descending order on sequence length
+               Can sort in ascending/descending order on sequence length.
+               Can read compressed (.gz) files.
 
       OPTIONS: -s, --sort    Sort the output on sequence length, shortest first
                -r, --revsort Sort the output on sequence length, longest first
@@ -27,13 +28,13 @@
 
       COMPANY: NBIS/NRM
 
-      VERSION: 2.0
+      VERSION: 2.1
 
       CREATED: < 2012
 
-     REVISION: 2019-08-14 11:15:57
+     REVISION: 2026-10-27
 
-      LICENSE: Copyright (c) 2019-2022 Johan Nylander
+      LICENSE: Copyright (c) 2019-2026 Johan Nylander
 
                Permission is hereby granted, free of charge, to any person
                obtaining a copy of this software and associated documentation
@@ -89,9 +90,17 @@ while ( my $fastafile = shift(@ARGV) ) {
     my $sequence;
     my $line;
 
-    open my $FASTA, "<", $fastafile or die("Open failed: $!");
+    my $FASTA;
+
+    if ($fastafile =~ /\.gz$/) {
+        open $FASTA, "gunzip -c $fastafile |" or die("Open failed: $!");
+    }
+    else {
+        open $FASTA, "<", $fastafile or die("Open failed: $!");
+    }
 
     $/ = ">";
+
     while (<$FASTA>) {
         chomp;
         next if ($_ eq '');
@@ -105,7 +114,9 @@ while ( my $fastafile = shift(@ARGV) ) {
         $seq_hash{$id} = $sequence;
         $pos++;
     }
+
     close($FASTA);
+
     $/ = $term;
 
     my @keys = ();
