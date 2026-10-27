@@ -142,6 +142,7 @@ can also read `bzip` format (if `bzip2` is installed) in addition to `.gz`,
 #### Options
 
 - `-h` print brief Usage information
+- `-v` print version
 - `-n` do not print the output header
 
 #### Examples
@@ -180,6 +181,7 @@ Can sort in ascending/descending order on sequence length.
 
 - `-s`, `--sort`    Sort the output on sequence length, shortest first
 - `-r`, `--revsort` Sort the output on sequence length, longest first
+- `-v`, `--version` Print version
 - `-h`, `--help`    Display help text
 
 #### Examples
