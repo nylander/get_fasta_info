@@ -11,7 +11,7 @@ For installation, see file [`INSTALL`](INSTALL).
 
 #### Description
 
-Program written in C. Distributed under the MIT license.
+Program written in C.
 
 Will report number of sequences, min/max/average sequence lengths, and file
 name read, as tab-delimited output. In addition, if option `-g` is used, the
@@ -96,7 +96,7 @@ calculating the average sequence length in the file.
 
 #### Description
 
-Program written in C. Distributed under the MIT license.
+Program written in C.
 
 Will report number of sequences, min/max/average sequence
 lengths, and average read quality, as tab-delimited output. Prints to both
@@ -134,8 +134,8 @@ calculating the average sequence length in the file.
 
 #### Description
 
-Perl-script with the same basic functionality as the (faster) C-program, but
-can also read `bzip` format (if `bzip2` is installed) in addition to `.gz`,
+Perl-script with the same basic functionality as the (much faster) C-program,
+but can also read `bzip` format (if `bzip2` is installed) in addition to `.gz`,
 `.zip`, and `.Z`. It does not, however, handle compressed tar archives
 (`.tar.gz`, etc).
 
@@ -173,9 +173,9 @@ recognize the code, please send me a note!
 Perl-script to read FASTA-formatted file and report a tab-separated list of
 sequence length, sequence number (in file), file name, FASTA header.
 
-Distributed under the MIT license.
-
 Can sort in ascending/descending order on sequence length.
+
+Can read compressed (.gz) files.
 
 #### Options
 
